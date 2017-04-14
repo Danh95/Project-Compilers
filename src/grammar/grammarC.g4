@@ -153,7 +153,7 @@ endStatement
 	;
 
 mainFunc
-	:	types 'main(' argListMain ')' '{' body '}' endStatement
+	:	'int main(' argListMain ')' '{' body '}' endStatement
 	;
 
 argListMain
