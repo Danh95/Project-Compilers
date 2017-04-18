@@ -83,8 +83,8 @@ LIT		//literal
 
 declaration
 	:	constant? types pointer* ID endStatement
-	|	constant? types pointer* ID'[' (LIT | ID) ']' endStatement	
-	|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
+	|	constant? types pointer* ID '[' (LIT | ID) ']' endStatement	
+	//|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
 	;
 
 definition
@@ -178,7 +178,7 @@ mainFunc
 	;
 
 argListMain
-	: 'int argc, char *argv[]'
+	: 'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
 	|
 	;
 
