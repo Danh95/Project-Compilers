@@ -32,7 +32,7 @@ argList
 	;
 
 body
-	:	statement* 'return' types ? ID
+	:	statement*
 	;
 
 statement
@@ -42,8 +42,17 @@ statement
 	|	definition	
 	|	conditional
 	|	operation
+	|	returnStatement
+	|	KW
 	;
 
+returnStatement
+	:	'return' functionCall endStatement
+	|	'return' condition	endStatement
+	|	'return' LIT endStatement
+	|	'return' ID endStatement
+	|	'return' endStatement
+	;
 functionCall
 	:	ID '(' parList ')' endStatement
 	;
@@ -58,8 +67,6 @@ assignment
 	|	ID '=' functionCall endStatement
 	|	ID '=' LIT endStatement
 	|	ID '=' ID endStatement
-	|	ID deincrement endStatement
-	|	deincrement ID endStatement
 	;
 
 deincrement
@@ -68,15 +75,27 @@ deincrement
 	;
 
 LIT		//literal
-	:	[0-9][0-9]*
+	:	[0-9]+
+	|	[0-9]*.[0.9]+
+	|	[0-9]+.[0-9]*
+	|	'\'' [a-zA-Z]+ '\''
 	;
 
 declaration
-	:	constant? types pointer* ID endStatement	
+	:	constant? types pointer* ID endStatement
+	|	constant? types pointer* ID'[' (LIT | ID) ']' endStatement	
+	|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
 	;
 
 definition
 	:	constant? types pointer* assignment  
+	|	constant? types pointer* ID'[' LIT ']' arrayAssignment
+	;
+
+arrayAssignment
+	:	'=' '{' ((LIT | ID) ',')* (LIT | ID)? '}' endStatement 
+	|	'=' '{' '}' endStatement
+	|	'=' (LIT | ID) endStatement
 	;
 
 conditional
@@ -122,7 +141,9 @@ operation
 	|	ID operator LIT
 	|	LIT operator LIT
 	|	operation operator ID
-	|	operation operator LIT	
+	|	operation operator LIT
+	|	ID deincrement endStatement
+	|	deincrement ID endStatement
 	;
 
 operator
@@ -153,7 +174,7 @@ endStatement
 	;
 
 mainFunc
-	:	'int main(' argListMain ')' '{' body '}' endStatement
+	:	'int main(' argListMain ')' '{' body '}'
 	;
 
 argListMain
@@ -162,9 +183,8 @@ argListMain
 	;
 
 KW
-	:	'continue;' 
-	|	'break;' 
-	|	'return;'
+	:	'continue' ';'			//Navragen, endStatement werkt niet hierbij
+	|	'break' ';'
 	;
 
 WS		//whiteSpace

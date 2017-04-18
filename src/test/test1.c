@@ -1,6 +1,8 @@
 
 
 int main() {
-	int x = 0;
-	float y = 7;
+	int x;
+	float y = 7.23;
+	char z;
+	z = sqbk;
 }

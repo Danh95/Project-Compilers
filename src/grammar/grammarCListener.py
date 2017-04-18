@@ -1,4 +1,4 @@
-# Generated from grammarC.g4 by ANTLR 4.6
+# Generated from grammarC.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .grammarCParser import grammarCParser
@@ -80,6 +80,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#returnStatement.
+    def enterReturnStatement(self, ctx:grammarCParser.ReturnStatementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#returnStatement.
+    def exitReturnStatement(self, ctx:grammarCParser.ReturnStatementContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#functionCall.
     def enterFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
         pass
@@ -131,6 +140,15 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#definition.
     def exitDefinition(self, ctx:grammarCParser.DefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#arrayAssignment.
+    def enterArrayAssignment(self, ctx:grammarCParser.ArrayAssignmentContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#arrayAssignment.
+    def exitArrayAssignment(self, ctx:grammarCParser.ArrayAssignmentContext):
         pass
 
 
