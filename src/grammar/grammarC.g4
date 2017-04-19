@@ -40,14 +40,14 @@ statement
 	|	assignment
 	|	declaration
 	|	definition	
-	|	conditional
-	|	operation
+	//|	conditional
+	//|	operation
 	|	returnStatement
 	|	KW endStatement
 	;
 
 returnStatement
-	:	'return' functionCall endStatement
+	:	'return' functionCall
 	|	'return' condition	endStatement
 	|	'return' LIT endStatement
 	|	'return' ID endStatement
@@ -63,10 +63,14 @@ parList
 	;
 
 assignment
-	:	ID '=' operation endStatement
-	|	ID '=' functionCall endStatement
-	|	ID '=' LIT endStatement
-	|	ID '=' ID endStatement
+	:	ID EQ LIT endStatement
+	|	ID EQ ID endStatement
+	//|	ID EQ functionCall
+	//|	ID EQ operation endStatement
+	;
+
+EQ
+	: '='
 	;
 
 deincrement
@@ -75,16 +79,15 @@ deincrement
 	;
 
 LIT		//literal
-	:	[0-9]+
-	|	[0-9]*.[0.9]+
-	|	[0-9]+.[0-9]*
-	|	'\'' [a-zA-Z]+ '\''
+	:	INT
+	|	FLOAT
+	|	STR
 	;
 
 declaration
 	:	constant? types pointer* ID endStatement
 	|	constant? types pointer* ID '[' (LIT | ID) ']' endStatement	
-	//|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
+	|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
 	;
 
 definition
@@ -178,10 +181,32 @@ mainFunc
 	;
 
 argListMain
-	: 'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
+	:	'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
 	|
 	;
 
+INT
+	:	[0-9]+
+	;
+
+FLOAT
+	:	[0-9]*.[0-9]+
+	|	[0-9]+.[0-9]*
+	;
+
+STR
+	:	'\'' [a-zA-Z][a-zA-Z]+ '\''
+	|	CHAR	
+	;
+
+CHAR
+	: '\'' [a-zA-Z] '\''
+	;
+
+VALUE
+	:	LIT
+	|	STR
+	;
 KW
 	:	'continue'			//Navragen, endStatement werkt niet hierbij
 	|	'break'
