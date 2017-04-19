@@ -43,7 +43,7 @@ statement
 	|	conditional
 	|	operation
 	|	returnStatement
-	|	KW
+	|	KW endStatement
 	;
 
 returnStatement
@@ -174,7 +174,7 @@ endStatement
 	;
 
 mainFunc
-	:	'int main(' argListMain ')' '{' body '}'
+	:	'int' 'main' '(' argListMain ')' '{' body '}'
 	;
 
 argListMain
@@ -183,8 +183,8 @@ argListMain
 	;
 
 KW
-	:	'continue' ';'			//Navragen, endStatement werkt niet hierbij
-	|	'break' ';'
+	:	'continue'			//Navragen, endStatement werkt niet hierbij
+	|	'break'
 	;
 
 WS		//whiteSpace

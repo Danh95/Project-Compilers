@@ -78,6 +78,6 @@ LC=45
 'char'=33
 'void'=34
 'const'=35
-'int main('=36
+'main'=36
 'argc'=37
 'argv'=38
