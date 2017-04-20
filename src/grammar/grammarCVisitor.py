@@ -64,11 +64,6 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#assignment.
-    def visitAssignment(self, ctx:grammarCParser.AssignmentContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by grammarCParser#deincrement.
     def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         return self.visitChildren(ctx)
@@ -81,6 +76,16 @@ class grammarCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by grammarCParser#definition.
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#assignment.
+    def visitAssignment(self, ctx:grammarCParser.AssignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#normalAssignment.
+    def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
         return self.visitChildren(ctx)
 
 

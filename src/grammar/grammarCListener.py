@@ -107,15 +107,6 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#assignment.
-    def enterAssignment(self, ctx:grammarCParser.AssignmentContext):
-        pass
-
-    # Exit a parse tree produced by grammarCParser#assignment.
-    def exitAssignment(self, ctx:grammarCParser.AssignmentContext):
-        pass
-
-
     # Enter a parse tree produced by grammarCParser#deincrement.
     def enterDeincrement(self, ctx:grammarCParser.DeincrementContext):
         pass
@@ -140,6 +131,24 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#definition.
     def exitDefinition(self, ctx:grammarCParser.DefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#assignment.
+    def enterAssignment(self, ctx:grammarCParser.AssignmentContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#assignment.
+    def exitAssignment(self, ctx:grammarCParser.AssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#normalAssignment.
+    def enterNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#normalAssignment.
+    def exitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
         pass
 
 

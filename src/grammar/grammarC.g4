@@ -18,10 +18,6 @@ libname
 	|	ID
 	;
 
-ID
-	:	[a-zA-Z]([0-9]|[a-zA-Z])*
-	;
-
 funcDef
 	:	types ID '(' argList ')' '{' body '}' endStatement
 	;
@@ -37,13 +33,13 @@ body
 
 statement
 	:	functionCall
-	|	assignment
 	|	declaration
-	|	definition	
+	//|	definition
+	//|	assignment	
 	//|	conditional
 	//|	operation
-	|	returnStatement
-	|	KW endStatement
+	//|	returnStatement
+	//|	KW endStatement
 	;
 
 returnStatement
@@ -53,6 +49,7 @@ returnStatement
 	|	'return' ID endStatement
 	|	'return' endStatement
 	;
+
 functionCall
 	:	ID '(' parList ')' endStatement
 	;
@@ -60,13 +57,6 @@ functionCall
 parList
 	:	(ID ',')*(ID)
 	|
-	;
-
-assignment
-	:	ID EQ LIT endStatement
-	|	ID EQ ID endStatement
-	//|	ID EQ functionCall
-	//|	ID EQ operation endStatement
 	;
 
 EQ
@@ -86,19 +76,30 @@ LIT		//literal
 
 declaration
 	:	constant? types pointer* ID endStatement
-	|	constant? types pointer* ID '[' (LIT | ID) ']' endStatement	
-	|	constant? types '(' pointer+ ID ')' '['( LIT | ID ) ']' endStatement
+	|	constant? types pointer* ID '[' (INT | ID) ']' endStatement	
+	//|	constant? types '(' pointer+ ID ')' '[' (INT | ID) ']' endStatement
 	;
 
 definition
-	:	constant? types pointer* assignment  
-	|	constant? types pointer* ID'[' LIT ']' arrayAssignment
+	:	constant? types pointer* assignment
+	;
+
+assignment
+	: normalAssignment
+	| arrayAssignment
+	;
+
+normalAssignment
+	:	ID EQ LIT endStatement
+	|	ID EQ ID endStatement
+	|	ID EQ functionCall
+	|	ID EQ operation endStatement
 	;
 
 arrayAssignment
-	:	'=' '{' ((LIT | ID) ',')* (LIT | ID)? '}' endStatement 
-	|	'=' '{' '}' endStatement
-	|	'=' (LIT | ID) endStatement
+	:	ID '[' LIT ']' EQ '{' ((LIT | ID) ',')* (LIT | ID)? '}' endStatement 
+	|	ID '[' LIT ']' EQ '{' '}' endStatement
+	|	ID '[' LIT ']' EQ (LIT | ID) endStatement
 	;
 
 conditional
@@ -208,12 +209,16 @@ VALUE
 	|	STR
 	;
 KW
-	:	'continue'			//Navragen, endStatement werkt niet hierbij
+	:	'continue'			
 	|	'break'
 	;
 
+ID
+	:	[a-zA-Z]([a-zA-Z0-9_])*
+	;
+
 WS		//whiteSpace
-    :   [ \t]+
+    :   [ \t\r\n]+
         -> skip
     ;
 
