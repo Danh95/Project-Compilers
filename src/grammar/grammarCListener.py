@@ -251,6 +251,24 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#mainFunc.
+    def enterMainFunc(self, ctx:grammarCParser.MainFuncContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#mainFunc.
+    def exitMainFunc(self, ctx:grammarCParser.MainFuncContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#argListMain.
+    def enterArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#argListMain.
+    def exitArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#types.
     def enterTypes(self, ctx:grammarCParser.TypesContext):
         pass

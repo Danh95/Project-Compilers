@@ -144,6 +144,16 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#mainFunc.
+    def visitMainFunc(self, ctx:grammarCParser.MainFuncContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#argListMain.
+    def visitArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#types.
     def visitTypes(self, ctx:grammarCParser.TypesContext):
         return self.visitChildren(ctx)

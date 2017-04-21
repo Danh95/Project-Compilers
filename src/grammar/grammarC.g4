@@ -25,6 +25,7 @@ libname
 
 funcDefList
 	:	funcDef funcDefList
+	|	mainFunc
 	|
 	;
 
@@ -150,14 +151,14 @@ kw
 	|	'break' endStatement
 	;
 
-//mainFunc
-	//:	'int' 'main' '(' argListMain ')' '{' body '}'
-	//;
+mainFunc
+	:	'int' 'main' '(' argListMain ')' '{' body '}'
+	;
 
-//argListMain
-	//:	'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
-	//|
-	//;
+argListMain
+	:	'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
+	|
+	;
 
 types
 	:	'int'
