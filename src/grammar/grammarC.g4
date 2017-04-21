@@ -2,7 +2,12 @@ grammar grammarC;
 
 
 program
-	:	library* funcDef* mainFunc
+	:	libraryList funcDefList
+	;
+
+libraryList
+	:	library libraryList
+	|
 	;
 
 library
@@ -18,6 +23,11 @@ libname
 	|	ID
 	;
 
+funcDefList
+	:	funcDef funcDefList
+	|
+	;
+
 funcDef
 	:	types ID '(' argList ')' '{' body '}' endStatement
 	;
@@ -28,60 +38,52 @@ argList
 	;
 
 body
-	:	statement*
+	:	statements
 	;
 
+statements
+	:	statement statements
+	|
+	;
+	
 statement
-	:	functionCall
-	|	declaration
-	//|	definition
-	//|	assignment	
-	//|	conditional
-	//|	operation
-	//|	returnStatement
-	//|	KW endStatement
+	:	declaration
+	|	definition
+	|	functionCall
+	|	assignment	
+	|	conditional
+	|	operation endStatement
+	|	returnStatement
+	|	kw
 	;
 
 returnStatement
 	:	'return' functionCall
-	|	'return' condition	endStatement
-	|	'return' LIT endStatement
+	|	'return' condition endStatement
+	|	'return' lit endStatement
 	|	'return' ID endStatement
+	|	'return' operation endStatement
 	|	'return' endStatement
 	;
 
-functionCall
-	:	ID '(' parList ')' endStatement
-	;
-
 parList
-	:	(ID ',')*(ID)
+	:	((lit|ID) ',')*(lit|ID)
 	|
-	;
-
-EQ
-	: '='
-	;
-
-deincrement
-	:	'++'
-	|	'--'
-	;
-
-LIT		//literal
-	:	INT
-	|	FLOAT
-	|	STR
 	;
 
 declaration
 	:	constant? types pointer* ID endStatement
-	|	constant? types pointer* ID '[' (INT | ID) ']' endStatement	
-	//|	constant? types '(' pointer+ ID ')' '[' (INT | ID) ']' endStatement
+	|	constant? types pointer* ID '[' (DIGIT | ID) ']' endStatement	
+	|	constant? types '(' pointer+ ID ')' '[' (DIGIT | ID) ']' endStatement
 	;
+
 
 definition
 	:	constant? types pointer* assignment
+	;
+
+functionCall
+	:	ID '(' parList ')' endStatement
 	;
 
 assignment
@@ -90,16 +92,16 @@ assignment
 	;
 
 normalAssignment
-	:	ID EQ LIT endStatement
-	|	ID EQ ID endStatement
-	|	ID EQ functionCall
-	|	ID EQ operation endStatement
+	:	ID assign lit endStatement
+	|	ID assign ID endStatement
+	|	ID assign functionCall
+	|	ID assign operation endStatement
 	;
 
 arrayAssignment
-	:	ID '[' LIT ']' EQ '{' ((LIT | ID) ',')* (LIT | ID)? '}' endStatement 
-	|	ID '[' LIT ']' EQ '{' '}' endStatement
-	|	ID '[' LIT ']' EQ (LIT | ID) endStatement
+	:	ID '[' (DIGIT | ID) ']' assign '{' ((lit | ID) ',')* (lit | ID)? '}' endStatement 
+	|	ID '[' (DIGIT | ID) ']' assign '{' '}' endStatement
+	|	ID '[' (DIGIT | ID) ']' assign (lit | ID) endStatement
 	;
 
 conditional
@@ -110,20 +112,13 @@ conditional
 
 condition
 	:	ID comparison ID
-	|	ID comparison LIT
-	;
-
-comparison
-	:	'<'
-	|	'>'
-	|	'=='
-	|	'<='
-	|	'>='
+	|	ID comparison lit
+	|	BOOL
 	;
 
 forCondition
-	:	deel1 ';' deel2 ';' deel3
-	|	' ; ; ' 
+	:	deel1 deel2 ';' deel3
+	|	';' ';' 
 	;
 
 deel1
@@ -142,12 +137,33 @@ deel3
 
 operation
 	:	ID operator ID
-	|	ID operator LIT
-	|	LIT operator LIT
+	|	ID operator lit
+	|	lit operator lit
 	|	operation operator ID
-	|	operation operator LIT
-	|	ID deincrement endStatement
-	|	deincrement ID endStatement
+	|	operation operator lit
+	|	ID deincrement
+	|	deincrement ID
+	;
+
+kw
+	:	'continue' endStatement	
+	|	'break' endStatement
+	;
+
+//mainFunc
+	//:	'int' 'main' '(' argListMain ')' '{' body '}'
+	//;
+
+//argListMain
+	//:	'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
+	//|
+	//;
+
+types
+	:	'int'
+	|	'float'
+	|	'char'
+	|	'void'
 	;
 
 operator
@@ -158,11 +174,17 @@ operator
 	|	'/'
 	;
 
-types
-	:	'int'
-	|	'float'
-	|	'char'
-	|	'void'
+comparison
+	:	'<'
+	|	'>'
+	|	'=='
+	|	'<='
+	|	'>='
+	;
+
+deincrement
+	:	'++'
+	|	'--'
 	;
 
 pointer
@@ -177,22 +199,25 @@ endStatement
 	:	';'
 	;
 
-mainFunc
-	:	'int' 'main' '(' argListMain ')' '{' body '}'
+assign
+	:	'='
 	;
 
-argListMain
-	:	'int' 'argc' ',' 'char' '*' 'argv' '[' ']'
-	|
+lit		//literal
+	:	DIGIT
+	|	FLT 
+	|	STR
+	|	BOOL
 	;
 
-INT
+
+DIGIT
 	:	[0-9]+
 	;
 
-FLOAT
-	:	[0-9]*.[0-9]+
-	|	[0-9]+.[0-9]*
+FLT
+	:	[0-9]*'.'[0-9]+
+	|	[0-9]+'.'[0-9]*
 	;
 
 STR
@@ -201,16 +226,12 @@ STR
 	;
 
 CHAR
-	: '\'' [a-zA-Z] '\''
+	:	'\'' [a-zA-Z] '\''
 	;
 
-VALUE
-	:	LIT
-	|	STR
-	;
-KW
-	:	'continue'			
-	|	'break'
+BOOL
+	:	'true'
+	|	'false'
 	;
 
 ID

@@ -14,6 +14,11 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#libraryList.
+    def visitLibraryList(self, ctx:grammarCParser.LibraryListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#library.
     def visitLibrary(self, ctx:grammarCParser.LibraryContext):
         return self.visitChildren(ctx)
@@ -26,6 +31,11 @@ class grammarCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by grammarCParser#libname.
     def visitLibname(self, ctx:grammarCParser.LibnameContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#funcDefList.
+    def visitFuncDefList(self, ctx:grammarCParser.FuncDefListContext):
         return self.visitChildren(ctx)
 
 
@@ -44,6 +54,11 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#statements.
+    def visitStatements(self, ctx:grammarCParser.StatementsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#statement.
     def visitStatement(self, ctx:grammarCParser.StatementContext):
         return self.visitChildren(ctx)
@@ -54,18 +69,8 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#functionCall.
-    def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by grammarCParser#parList.
     def visitParList(self, ctx:grammarCParser.ParListContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by grammarCParser#deincrement.
-    def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         return self.visitChildren(ctx)
 
 
@@ -76,6 +81,11 @@ class grammarCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by grammarCParser#definition.
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#functionCall.
+    def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
         return self.visitChildren(ctx)
 
 
@@ -104,11 +114,6 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#comparison.
-    def visitComparison(self, ctx:grammarCParser.ComparisonContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by grammarCParser#forCondition.
     def visitForCondition(self, ctx:grammarCParser.ForConditionContext):
         return self.visitChildren(ctx)
@@ -134,13 +139,28 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#operator.
-    def visitOperator(self, ctx:grammarCParser.OperatorContext):
+    # Visit a parse tree produced by grammarCParser#kw.
+    def visitKw(self, ctx:grammarCParser.KwContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by grammarCParser#types.
     def visitTypes(self, ctx:grammarCParser.TypesContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#operator.
+    def visitOperator(self, ctx:grammarCParser.OperatorContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#comparison.
+    def visitComparison(self, ctx:grammarCParser.ComparisonContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#deincrement.
+    def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         return self.visitChildren(ctx)
 
 
@@ -159,13 +179,13 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#mainFunc.
-    def visitMainFunc(self, ctx:grammarCParser.MainFuncContext):
+    # Visit a parse tree produced by grammarCParser#assign.
+    def visitAssign(self, ctx:grammarCParser.AssignContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#argListMain.
-    def visitArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+    # Visit a parse tree produced by grammarCParser#lit.
+    def visitLit(self, ctx:grammarCParser.LitContext):
         return self.visitChildren(ctx)
 
 

@@ -17,6 +17,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#libraryList.
+    def enterLibraryList(self, ctx:grammarCParser.LibraryListContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#libraryList.
+    def exitLibraryList(self, ctx:grammarCParser.LibraryListContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#library.
     def enterLibrary(self, ctx:grammarCParser.LibraryContext):
         pass
@@ -41,6 +50,15 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#libname.
     def exitLibname(self, ctx:grammarCParser.LibnameContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#funcDefList.
+    def enterFuncDefList(self, ctx:grammarCParser.FuncDefListContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#funcDefList.
+    def exitFuncDefList(self, ctx:grammarCParser.FuncDefListContext):
         pass
 
 
@@ -71,6 +89,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#statements.
+    def enterStatements(self, ctx:grammarCParser.StatementsContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#statements.
+    def exitStatements(self, ctx:grammarCParser.StatementsContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#statement.
     def enterStatement(self, ctx:grammarCParser.StatementContext):
         pass
@@ -89,30 +116,12 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#functionCall.
-    def enterFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
-        pass
-
-    # Exit a parse tree produced by grammarCParser#functionCall.
-    def exitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
-        pass
-
-
     # Enter a parse tree produced by grammarCParser#parList.
     def enterParList(self, ctx:grammarCParser.ParListContext):
         pass
 
     # Exit a parse tree produced by grammarCParser#parList.
     def exitParList(self, ctx:grammarCParser.ParListContext):
-        pass
-
-
-    # Enter a parse tree produced by grammarCParser#deincrement.
-    def enterDeincrement(self, ctx:grammarCParser.DeincrementContext):
-        pass
-
-    # Exit a parse tree produced by grammarCParser#deincrement.
-    def exitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         pass
 
 
@@ -131,6 +140,15 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#definition.
     def exitDefinition(self, ctx:grammarCParser.DefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#functionCall.
+    def enterFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#functionCall.
+    def exitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
         pass
 
 
@@ -179,15 +197,6 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#comparison.
-    def enterComparison(self, ctx:grammarCParser.ComparisonContext):
-        pass
-
-    # Exit a parse tree produced by grammarCParser#comparison.
-    def exitComparison(self, ctx:grammarCParser.ComparisonContext):
-        pass
-
-
     # Enter a parse tree produced by grammarCParser#forCondition.
     def enterForCondition(self, ctx:grammarCParser.ForConditionContext):
         pass
@@ -233,12 +242,12 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#operator.
-    def enterOperator(self, ctx:grammarCParser.OperatorContext):
+    # Enter a parse tree produced by grammarCParser#kw.
+    def enterKw(self, ctx:grammarCParser.KwContext):
         pass
 
-    # Exit a parse tree produced by grammarCParser#operator.
-    def exitOperator(self, ctx:grammarCParser.OperatorContext):
+    # Exit a parse tree produced by grammarCParser#kw.
+    def exitKw(self, ctx:grammarCParser.KwContext):
         pass
 
 
@@ -248,6 +257,33 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#types.
     def exitTypes(self, ctx:grammarCParser.TypesContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#operator.
+    def enterOperator(self, ctx:grammarCParser.OperatorContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#operator.
+    def exitOperator(self, ctx:grammarCParser.OperatorContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#comparison.
+    def enterComparison(self, ctx:grammarCParser.ComparisonContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#comparison.
+    def exitComparison(self, ctx:grammarCParser.ComparisonContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#deincrement.
+    def enterDeincrement(self, ctx:grammarCParser.DeincrementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#deincrement.
+    def exitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         pass
 
 
@@ -278,21 +314,21 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#mainFunc.
-    def enterMainFunc(self, ctx:grammarCParser.MainFuncContext):
+    # Enter a parse tree produced by grammarCParser#assign.
+    def enterAssign(self, ctx:grammarCParser.AssignContext):
         pass
 
-    # Exit a parse tree produced by grammarCParser#mainFunc.
-    def exitMainFunc(self, ctx:grammarCParser.MainFuncContext):
+    # Exit a parse tree produced by grammarCParser#assign.
+    def exitAssign(self, ctx:grammarCParser.AssignContext):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#argListMain.
-    def enterArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+    # Enter a parse tree produced by grammarCParser#lit.
+    def enterLit(self, ctx:grammarCParser.LitContext):
         pass
 
-    # Exit a parse tree produced by grammarCParser#argListMain.
-    def exitArgListMain(self, ctx:grammarCParser.ArgListMainContext):
+    # Exit a parse tree produced by grammarCParser#lit.
+    def exitLit(self, ctx:grammarCParser.LitContext):
         pass
 
 

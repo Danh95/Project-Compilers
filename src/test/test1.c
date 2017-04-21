@@ -1,9 +1,9 @@
 
 
 int main() {
-	//simpel types definitions and declarations
+	//simpel types definitions and declarations and assignments
 	int x;
-	x=5;
+	x = 5;
 	int c = 95;
 	int d=152;
 	float a = .7;
