@@ -75,7 +75,7 @@ class buildAST(grammarCVisitor):
         if(ctx.getChildCount()==3):
             self.visitOperator(ctx.operator())
             self.file.noChild()
-    
+
         self.file.newChild(ctx.getChild(ctx.getChildCount()-1).getText())
         self.file.noChild()
         self.file.noChild()
