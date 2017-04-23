@@ -5,6 +5,7 @@ int main() {
 	int x;
 	x = 5;
 	int c = 95;
+	int h = x;
 	int d=152;
 	float a = .7;
 	a=.8;

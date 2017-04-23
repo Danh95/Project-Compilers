@@ -1,4 +1,4 @@
-# Generated from grammarC.g4 by ANTLR 4.7
+# Generated from ./src/grammar/grammarC.g4 by ANTLR 4.7
 from antlr4 import *
 from io import StringIO
 from typing.io import TextIO

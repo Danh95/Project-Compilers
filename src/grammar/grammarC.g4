@@ -100,11 +100,16 @@ normalAssignment
 	;
 
 arrayAssignment
-	:	ID '[' (DIGIT | ID) ']' assign '{' ((lit | ID) ',')* (lit | ID)? '}' endStatement 
-	|	ID '[' (DIGIT | ID) ']' assign '{' '}' endStatement
-	|	ID '[' (DIGIT | ID) ']' assign (lit | ID) endStatement
+	:	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
+	|	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
+	|	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
 	;
 
+arrayOptions
+    :   '{' ((lit | ID) ',')* (lit | ID)? '}'
+    |   '{' '}'
+    |   (lit | ID)
+    ;
 conditional
 	:	'if' '(' condition ')' '{' body '}'  ('else' '{' body '}')?
 	|	'while' '(' condition ')' '{' body '}'
@@ -140,8 +145,8 @@ operation
 	:	ID operator ID
 	|	ID operator lit
 	|	lit operator lit
-	|	operation operator ID
-	|	operation operator lit
+	|	ID operator operation
+	|	lit operator operation
 	|	ID deincrement
 	|	deincrement ID
 	;
