@@ -30,11 +30,11 @@ funcDefList
 	;
 
 funcDef
-	:	types ID '(' argList ')' '{' body '}' endStatement
+	:	types lValue '(' argList ')' '{' body '}' endStatement
 	;
 
 argList
-	:	(types ID ',')*(types ID)
+	:	(types lValue ',')*(types lValue)
 	|
 	;
 
@@ -61,30 +61,29 @@ statement
 returnStatement
 	:	'return' functionCall
 	|	'return' condition endStatement
-	|	'return' lit endStatement
-	|	'return' ID endStatement
+	|	'return' rValue endStatement
 	|	'return' operation endStatement
 	|	'return' endStatement
 	;
 
 parList
-	:	((lit|ID) ',')*(lit|ID)
+	:	(rValue ',')*(rValue)
 	|
 	;
 
 declaration
-	:	constant? types pointer* ID endStatement
-	|	constant? types pointer* ID '[' (DIGIT | ID) ']' endStatement	
-	|	constant? types '(' pointer+ ID ')' '[' (DIGIT | ID) ']' endStatement
+	:	constant? types (pointer* | reference*) lValue endStatement
+	|	constant? types pointer* lValue '[' (DIGIT | ID) ']' endStatement	
+	|	constant? types '(' pointer+ lValue ')' '[' (DIGIT | ID) ']' endStatement
 	;
 
 
 definition
-	:	constant? types pointer* assignment
+	:	constant? types (pointer* | reference*) assignment
 	;
 
 functionCall
-	:	ID '(' parList ')' endStatement
+	:	lValue '(' parList ')' endStatement
 	;
 
 assignment
@@ -93,23 +92,23 @@ assignment
 	;
 
 normalAssignment
-	:	ID assign lit endStatement
-	|	ID assign ID endStatement
-	|	ID assign functionCall
-	|	ID assign operation endStatement
+	:	lValue assign rValue endStatement
+	|	lValue assign functionCall
+	|	lValue assign operation endStatement
 	;
 
 arrayAssignment
-	:	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
-	|	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
-	|	ID '[' (DIGIT | ID) ']' assign arrayOptions endStatement
+	:	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
+	|	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
+	|	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
 	;
 
 arrayOptions
-    :   '{' ((lit | ID) ',')* (lit | ID)? '}'
+    :   '{' (rValue ',')* (rValue)? '}'
     |   '{' '}'
-    |   (lit | ID)
+    |   rValue
     ;
+
 conditional
 	:	'if' '(' condition ')' '{' body '}'  ('else' '{' body '}')?
 	|	'while' '(' condition ')' '{' body '}'
@@ -117,9 +116,10 @@ conditional
 	;
 
 condition
-	:	ID comparison ID
-	|	ID comparison lit
-	|	BOOL
+	:	rValue comparison rValue
+	|	'!'? rValue
+	|	condition ('&&' | '||') condition
+	| 	'!' '(' condition ')'
 	;
 
 forCondition
@@ -142,13 +142,10 @@ deel3
 	;
 
 operation
-	:	ID operator ID
-	|	ID operator lit
-	|	lit operator lit
-	|	ID operator operation
-	|	lit operator operation
-	|	ID deincrement
-	|	deincrement ID
+	:	rValue operator rValue
+	|	rValue operator operation
+	|	rValue deincrement
+	|	deincrement rValue
 	;
 
 kw
@@ -197,6 +194,10 @@ pointer
 	:	'*'
 	;
 
+reference
+	: '&'
+	;
+
 constant
 	:	'const'
 	;
@@ -209,21 +210,25 @@ assign
 	:	'='
 	;
 
-lit		//literal
+rValue		//literal
 	:	DIGIT
 	|	FLT 
 	|	STR
 	|	BOOL
+	|	ID
 	;
 
+lValue
+	:	ID
+	;
 
 DIGIT
-	:	[0-9]+
+	:	'-'?[0-9]+
 	;
 
 FLT
-	:	[0-9]*'.'[0-9]+
-	|	[0-9]+'.'[0-9]*
+	:	'-'?[0-9]*'.'[0-9]+
+	|	'-'?[0-9]+'.'[0-9]*
 	;
 
 STR

@@ -1,4 +1,4 @@
-# Generated from ./src/grammar/grammarC.g4 by ANTLR 4.7
+# Generated from grammarC.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .grammarCParser import grammarCParser
@@ -184,6 +184,11 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#reference.
+    def visitReference(self, ctx:grammarCParser.ReferenceContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#constant.
     def visitConstant(self, ctx:grammarCParser.ConstantContext):
         return self.visitChildren(ctx)
@@ -199,8 +204,13 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#lit.
-    def visitLit(self, ctx:grammarCParser.LitContext):
+    # Visit a parse tree produced by grammarCParser#rValue.
+    def visitRValue(self, ctx:grammarCParser.RValueContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#lValue.
+    def visitLValue(self, ctx:grammarCParser.LValueContext):
         return self.visitChildren(ctx)
 
 

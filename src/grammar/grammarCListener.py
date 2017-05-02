@@ -1,4 +1,4 @@
-# Generated from ./src/grammar/grammarC.g4 by ANTLR 4.7
+# Generated from grammarC.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .grammarCParser import grammarCParser
@@ -323,6 +323,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#reference.
+    def enterReference(self, ctx:grammarCParser.ReferenceContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#reference.
+    def exitReference(self, ctx:grammarCParser.ReferenceContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#constant.
     def enterConstant(self, ctx:grammarCParser.ConstantContext):
         pass
@@ -350,12 +359,21 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#lit.
-    def enterLit(self, ctx:grammarCParser.LitContext):
+    # Enter a parse tree produced by grammarCParser#rValue.
+    def enterRValue(self, ctx:grammarCParser.RValueContext):
         pass
 
-    # Exit a parse tree produced by grammarCParser#lit.
-    def exitLit(self, ctx:grammarCParser.LitContext):
+    # Exit a parse tree produced by grammarCParser#rValue.
+    def exitRValue(self, ctx:grammarCParser.RValueContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#lValue.
+    def enterLValue(self, ctx:grammarCParser.LValueContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#lValue.
+    def exitLValue(self, ctx:grammarCParser.LValueContext):
         pass
 
 
