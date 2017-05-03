@@ -110,10 +110,30 @@ arrayOptions
     ;
 
 conditional
-	:	'if' '(' condition ')' '{' body '}'  ('else' '{' body '}')?
-	|	'while' '(' condition ')' '{' body '}'
-	|	'for' '(' forCondition ')' '{' body '}'
+	:	ifStatement (elifStatement)* (elseStatement)?
+    |   whileStatement
+    |	loop
 	;
+
+ifStatement
+    :   'if' '(' condition ')' '{' body '}'
+    ;
+
+elifStatement
+    :   'else if' '(' condition ')' '{' body '}'
+    ;
+
+elseStatement
+    :   'else' '{' body '}'
+    ;
+
+whileStatement
+    :   'while' '(' condition ')' '{' body '}'
+    ;
+
+loop
+    :   'for' '(' forCondition ')' '{' body '}'
+    ;
 
 condition
 	:	rValue comparison rValue

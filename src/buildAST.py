@@ -58,7 +58,16 @@ class buildAST(grammarCVisitor):
 
     def visitConditional(self, ctx: grammarCParser.ConditionalContext):
         self.file.newChild(ctx.getChild(0).getText() + "\n" + ctx.getChild(2).getText())
-        #self.visitBody(ctx.body())
+        if(ctx.getChildCount()>7):
+            self.visitBody(ctx.body()[0])
+            self.file.newChild(ctx.getChild(7).getText())
+            self.visitBody(ctx.body()[1])
+            self.file.goBack()
+            self.file.goBack()
+            self.file.goBack()
+        else:
+            self.visitBody(ctx.body()[0])
+            self.file.goBack()
         self.file.goBack()
 
     def visitReturnStatement(self, ctx: grammarCParser.ReturnStatementContext):
@@ -67,9 +76,7 @@ class buildAST(grammarCVisitor):
         self.file.goBack()
 
     def visitKw(self, ctx: grammarCParser.KwContext):
-        self.file.newChild("Keyword")
         self.file.newChild(ctx.getChild(0).getText())
-        self.file.goBack()
         self.visitChildren(ctx)
         self.file.goBack()
 
