@@ -114,6 +114,31 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#ifStatement.
+    def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#elifStatement.
+    def visitElifStatement(self, ctx:grammarCParser.ElifStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#elseStatement.
+    def visitElseStatement(self, ctx:grammarCParser.ElseStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#whileStatement.
+    def visitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#loop.
+    def visitLoop(self, ctx:grammarCParser.LoopContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#condition.
     def visitCondition(self, ctx:grammarCParser.ConditionContext):
         return self.visitChildren(ctx)

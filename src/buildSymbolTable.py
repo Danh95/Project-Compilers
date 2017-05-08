@@ -36,7 +36,7 @@ class buildSymbolTable(GrammarCVisitor):
             if(len(typeList)==len(idList)):
                 for i in range(len(typeList)):
                     self.add(idList[i], "function argument", typeList[i])
-                    
+
 
     def visitBody(self, ctx:grammarCParser.BodyContext):
         self.symbol_Table.add

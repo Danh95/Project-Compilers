@@ -56,7 +56,7 @@ class buildAST(grammarCVisitor):
         self.file.newChild(ctx.getChild(0).getText() + "()")
         self.file.goBack()
 
-    def visitConditional(self, ctx: grammarCParser.ConditionalContext):
+    """def visitConditional(self, ctx: grammarCParser.ConditionalContext):
         self.file.newChild(ctx.getChild(0).getText() + "\n" + ctx.getChild(2).getText())
         if(ctx.getChildCount()>7):
             self.visitBody(ctx.body()[0])
@@ -69,6 +69,7 @@ class buildAST(grammarCVisitor):
             self.visitBody(ctx.body()[0])
             self.file.goBack()
         self.file.goBack()
+    """
 
     def visitReturnStatement(self, ctx: grammarCParser.ReturnStatementContext):
         self.file.newChild("Return")
@@ -116,7 +117,47 @@ class buildAST(grammarCVisitor):
         self.visitChildren(ctx)
         self.file.goBack()
 
-    
+
+    def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
+        self.file.newChild("if\n" + self.visitCondition(ctx.condition()))
+        self.visitBody(ctx.body())
+        self.file.goBack()
+
+    def visitElifStatement(self, ctx:grammarCParser.ElifStatementContext):
+        self.file.newChild("else if\n" + self.visitCondition(ctx.condition()))
+        self.visitBody(ctx.body())
+        self.file.goBack()
+
+    def visitElseStatement(self, ctx:grammarCParser.ElseStatementContext):
+        self.file.newChild("else")
+        self.visitBody(ctx.body())
+        self.file.goBack()
+
+    def visitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
+        self.file.newChild("while\n" + self.visitCondition(ctx.condition()))
+        self.visitBody(ctx.body())
+        self.file.goBack()
+
+    def visitLoop(self, ctx:grammarCParser.LoopContext):
+        self.file.newChild("for\n" + self.visitForCondition(ctx.forCondition()))
+        self.visitBody(ctx.body())
+        self.file.goBack()
+
+    def visitForCondition(self, ctx:grammarCParser.ForConditionContext):
+        return ctx.getText()
+
+    def visitCondition(self, ctx:grammarCParser.ConditionContext):
+        return ctx.getText()
+
+    def visitPointer(self, ctx:grammarCParser.PointerContext):
+        return "Pointer"
+
+    def visitConstant(self, ctx:grammarCParser.ConstantContext):
+        return "Constant"
+
+    def visitReference(self, ctx:grammarCParser.ReferenceContext):
+        return "Reference"
+
     """
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
         self.file.newChild(str(ctx.lValue()[0]))

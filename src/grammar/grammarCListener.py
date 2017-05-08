@@ -197,6 +197,51 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#ifStatement.
+    def enterIfStatement(self, ctx:grammarCParser.IfStatementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#ifStatement.
+    def exitIfStatement(self, ctx:grammarCParser.IfStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#elifStatement.
+    def enterElifStatement(self, ctx:grammarCParser.ElifStatementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#elifStatement.
+    def exitElifStatement(self, ctx:grammarCParser.ElifStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#elseStatement.
+    def enterElseStatement(self, ctx:grammarCParser.ElseStatementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#elseStatement.
+    def exitElseStatement(self, ctx:grammarCParser.ElseStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#whileStatement.
+    def enterWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#whileStatement.
+    def exitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#loop.
+    def enterLoop(self, ctx:grammarCParser.LoopContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#loop.
+    def exitLoop(self, ctx:grammarCParser.LoopContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#condition.
     def enterCondition(self, ctx:grammarCParser.ConditionContext):
         pass
