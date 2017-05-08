@@ -87,6 +87,7 @@ class buildAST(grammarCVisitor):
 
     def visitRValue(self, ctx:grammarCParser.RValueContext):
         self.file.newChild(ctx.getText())
+
         self.file.goBack()
 
     def visitArrayOptions(self, ctx:grammarCParser.ArrayOptionsContext):

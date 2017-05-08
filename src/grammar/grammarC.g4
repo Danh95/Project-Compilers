@@ -29,8 +29,10 @@ funcDefList
 	|
 	;
 
+//funcDecl???
+
 funcDef
-	:	types lValue '(' argList ')' '{' body '}' endStatement
+	:	types lValue '(' argList ')' '{' body '}'
 	;
 
 argList
@@ -137,7 +139,7 @@ loop
 
 condition
 	:	rValue comparison rValue
-	|	'!'? rValue
+	|	'!' rValue  //als '!'? dan wordt rValue als condition beschouwd in niet condition context
 	|	condition ('&&' | '||') condition
 	| 	'!' '(' condition ')'
 	;
@@ -203,6 +205,7 @@ comparison
 	|	'=='
 	|	'<='
 	|	'>='
+	|   '!='
 	;
 
 deincrement
