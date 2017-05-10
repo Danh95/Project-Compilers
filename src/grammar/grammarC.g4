@@ -25,11 +25,14 @@ libname
 
 funcDefList
 	:	funcDef funcDefList
+	|   funcDecl funcDefList
 	|	mainFunc
 	|
 	;
 
-//funcDecl???
+funcDecl
+    :   types pointer lValue '(' parList ')' endStatement
+    ;
 
 funcDef
 	:	types lValue '(' argList ')' '{' body '}'
@@ -62,8 +65,8 @@ statement
 
 returnStatement
 	:	'return' functionCall
-	|	'return' condition endStatement
 	|	'return' rValue endStatement
+	|	'return' condition endStatement
 	|	'return' operation endStatement
 	|	'return' endStatement
 	;
@@ -139,7 +142,7 @@ loop
 
 condition
 	:	rValue comparison rValue
-	|	'!' rValue  //als '!'? dan wordt rValue als condition beschouwd in niet condition context
+	|	'!'? rValue  //als '!'? dan wordt rValue als condition beschouwd in niet condition context
 	|	condition ('&&' | '||') condition
 	| 	'!' '(' condition ')'
 	;

@@ -62,6 +62,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#funcDecl.
+    def enterFuncDecl(self, ctx:grammarCParser.FuncDeclContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#funcDecl.
+    def exitFuncDecl(self, ctx:grammarCParser.FuncDeclContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#funcDef.
     def enterFuncDef(self, ctx:grammarCParser.FuncDefContext):
         pass

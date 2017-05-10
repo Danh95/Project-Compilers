@@ -5,11 +5,21 @@ class Node():
         self.name = name
         self.data = {}
 
-    def insert(self, label, type):
-        self.data[label] = type
+    def __str__(self):
+        return str(self.data)
+
+    def insert(self, label, type, function):
+        values = self.lookup(label)
+        if(values[1]!=function and values[1]!="function definition"):
+            self.data[label] = (type, function)
+        else:
+            print("Error: Duplicate instance of " + str(function))
+            raise
 
     def lookup(self, label):
-        pass
+        return self.data.get(label, (0, "error"))
+
+
 
 class symbolTable():
 
@@ -28,4 +38,18 @@ class symbolTable():
             self.currentNode = self.currentNode.parent
 
     def add(self, label, function, type):
-        self.currentNode.insert(label, type)
+            #add in dict
+        self.currentNode.insert(label, type, function)
+
+    def search(self, label):
+        cN = self.currentNode
+        temp = self.currentNode.lookup(label)
+        if(temp==(0, "error")):
+            self.currentNode = self.currentNode.parent
+            if(self.search(label)):
+                self.currentNode = cN
+                return True
+            if (self.currenNode == self.root):
+                raise
+        else:
+            return True
