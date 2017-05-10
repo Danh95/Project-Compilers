@@ -31,7 +31,12 @@ funcDefList
 	;
 
 funcDecl
-    :   types pointer lValue '(' parList ')' endStatement
+    :   types pointer lValue '(' typeList ')' endStatement
+    ;
+
+typeList
+    :   (types (lValue)? ',')*(types (lValue)?)
+    |
     ;
 
 funcDef

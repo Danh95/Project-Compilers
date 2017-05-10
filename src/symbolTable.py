@@ -42,9 +42,13 @@ class symbolTable():
         self.currentNode.insert(label, type, function)
 
     def search(self, label):
+        print(label)
         cN = self.currentNode
+        print(cN)
         temp = self.currentNode.lookup(label)
+        print(temp)
         if(temp==(0, "error")):
+            print("times")
             self.currentNode = self.currentNode.parent
             if(self.search(label)):
                 self.currentNode = cN

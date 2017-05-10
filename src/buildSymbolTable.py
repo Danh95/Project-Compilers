@@ -21,14 +21,14 @@ class buildSymbolTable(grammarCVisitor):
         self.symbol_Table.goToParent()
 
     def visitFuncDef(self, ctx:grammarCParser.FuncDefContext):
-        name = self.visitLValue(ctx.LValue())
+        name = self.visitLValue(ctx.lValue())
         self.symbol_Table.add(name, "function definition", self.visitTypes(ctx.types()))
         self.symbol_Table.addChild(name)
         self.visitChildren(ctx)
         self.symbol_Table.goToParent()
 
     def visitFuncDecl(self, ctx:grammarCParser.FuncDeclContext):
-        name = self.visitLValue(ctx.LValue())
+        name = self.visitLValue(ctx.lValue())
         self.symbol_Table.add(name, "function declaration", self.visitTypes(ctx.types()))
         self.symbol_Table.addChild(name)
         self.visitChildren(ctx)
@@ -48,7 +48,6 @@ class buildSymbolTable(grammarCVisitor):
                     #put the right duo in the symbol table
                     self.add(idList[i], "function argument", typeList[i])
 
-
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
         name = self.visitLValue(ctx.lValue())
         self.symbol_Table.add(name, "var declaration", self.visitTypes(ctx.types()))
@@ -57,29 +56,38 @@ class buildSymbolTable(grammarCVisitor):
         name = self.visitAssignment(ctx.assignment())
         self.symbol_Table.add(name, "var definition", self.visitTypes(ctx.types()))
 
+    def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
+        self.symbol_Table.search(self.visitLValue(ctx.lValue()))
+
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
+        self.symbol_Table.search(ctx.lValue().getText())
         return self.visitLValue(ctx.lValue())
 
     def visitArrayAssignment(self, ctx:grammarCParser.ArrayAssignmentContext):
-        return ctx.visitLValue()
+        self.symbol_Table.search(ctx.lValue().getText())
+        return self.visitLValue(ctx.lValue())
 
     def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
         self.symbol_Table.addChild("if")
+        self.visitCondition(ctx.condition())
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
     def visitElifStatement(self, ctx:grammarCParser.ElifStatementContext):
         self.symbol_Table.addChild("else if")
+        self.visitCondition(ctx.condition())
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
     def visitElseStatement(self, ctx:grammarCParser.ElseStatementContext):
         self.symbol_Table.addChild("else")
+        self.visitCondition(ctx.condition())
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
     def visitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
         self.symbol_Table.addChild("while")
+        self.visitCondition(ctx.condition())
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
@@ -89,7 +97,8 @@ class buildSymbolTable(grammarCVisitor):
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
-
+    def visitRValue(self, ctx:grammarCParser.RValueContext):
+        self.symbol_Table.search(ctx.ID())
 
     def visitLValue(self, ctx:grammarCParser.LValueContext):
         return ctx.getText()
