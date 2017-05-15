@@ -21,7 +21,7 @@ def main(argv):
     AST = buildAST(parser)
     AST.visitProgram(tree)
     Symbol_Table = buildSymbolTable(parser)
-    #Symbol_Table.visitProgram(tree)
+    Symbol_Table.visitProgram(tree)
     #Symbol_Table.symbol_Table.search("x")
 
 if __name__ == '__main__':

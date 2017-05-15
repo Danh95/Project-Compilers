@@ -43,11 +43,13 @@ class symbolTable():
 
     def search(self, label):
         print(label)
+        print(self.root)
         cN = self.currentNode
         print(cN)
         temp = self.currentNode.lookup(label)
         print(temp)
         if(temp==(0, "error")):
+            #not found in current Node
             print("times")
             self.currentNode = self.currentNode.parent
             if(self.search(label)):
@@ -56,4 +58,5 @@ class symbolTable():
             if (self.currenNode == self.root):
                 raise
         else:
+            #found
             return True

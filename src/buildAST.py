@@ -151,22 +151,22 @@ class buildAST(grammarCVisitor):
         return ctx.getText()
 
     def visitPointer(self, ctx:grammarCParser.PointerContext):
-        if(ctx!=None):
-            return "Pointer"
-        else:
+        if(ctx==None or ctx==[]):
             return ""
+        else:
+            return "Pointer"
 
     def visitConstant(self, ctx:grammarCParser.ConstantContext):
-        if(ctx!=None):
-            return "Constant"
-        else:
+        if(ctx==None or ctx==[]):
             return ""
+        else:
+            return "Constant"
 
     def visitReference(self, ctx:grammarCParser.ReferenceContext):
-        if(ctx!=None):
-            return "Reference"
-        else:
+        if(ctx==None or ctx==[]):
             return ""
+        else:
+            return "Reference"
 
     """
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
