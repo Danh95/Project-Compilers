@@ -34,7 +34,7 @@ class buildAST(grammarCVisitor):
 
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
         self.file.newChild("Declaration")
-        self.file.newChild(ctx.types().getText())
+        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()))
         self.file.goBack()
         self.file.newChild(ctx.lValue().getText())
         self.file.goBack()
@@ -42,7 +42,7 @@ class buildAST(grammarCVisitor):
 
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
         self.file.newChild("Definition")
-        self.file.newChild(ctx.types().getText())
+        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()))
         self.file.goBack()
         self.visitChildren(ctx)
         self.file.goBack()
@@ -151,13 +151,22 @@ class buildAST(grammarCVisitor):
         return ctx.getText()
 
     def visitPointer(self, ctx:grammarCParser.PointerContext):
-        return "Pointer"
+        if(ctx!=None):
+            return "Pointer"
+        else:
+            return ""
 
     def visitConstant(self, ctx:grammarCParser.ConstantContext):
-        return "Constant"
+        if(ctx!=None):
+            return "Constant"
+        else:
+            return ""
 
     def visitReference(self, ctx:grammarCParser.ReferenceContext):
-        return "Reference"
+        if(ctx!=None):
+            return "Reference"
+        else:
+            return ""
 
     """
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
