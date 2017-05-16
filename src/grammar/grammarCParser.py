@@ -1,4 +1,4 @@
-# Generated from grammarC.g4 by ANTLR 4.7
+# Generated from ./src/grammar/grammarC.g4 by ANTLR 4.7
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -7,7 +7,7 @@ import sys
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\39")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3:")
         buf.write("\u0212\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
@@ -59,9 +59,9 @@ def serializedATN():
         buf.write("&\3&\3&\3&\5&\u01fa\n&\3\'\3\'\3(\3(\3)\3)\3*\3*\3+\3")
         buf.write("+\3,\3,\3-\3-\3.\3.\3/\3/\3\60\3\60\3\61\3\61\3\61\2\3")
         buf.write(":\62\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60")
-        buf.write("\62\64\668:<>@BDFHJLNPRTVXZ\\^`\2\n\4\2\6\6\65\65\4\2")
-        buf.write("\60\60\65\65\3\2\25\26\5\2\32\32\35\35 !\4\2\36\36\"%")
-        buf.write("\4\2\4\4&*\3\2+,\4\2\60\62\64\65\2\u0220\2b\3\2\2\2\4")
+        buf.write("\62\64\668:<>@BDFHJLNPRTVXZ\\^`\2\n\4\2\6\6\66\66\4\2")
+        buf.write("\61\61\66\66\3\2\25\26\5\2\32\32\35\35 \"\4\2\36\36#&")
+        buf.write("\4\2\4\4\'+\3\2,-\4\2\61\63\65\66\2\u0220\2b\3\2\2\2\4")
         buf.write("i\3\2\2\2\6k\3\2\2\2\bn\3\2\2\2\nr\3\2\2\2\f|\3\2\2\2")
         buf.write("\16~\3\2\2\2\20\u0096\3\2\2\2\22\u0098\3\2\2\2\24\u00ae")
         buf.write("\3\2\2\2\26\u00b0\3\2\2\2\30\u00b6\3\2\2\2\32\u00c2\3")
@@ -241,15 +241,15 @@ def serializedATN():
         buf.write("\u01fc\t\5\2\2\u01fcM\3\2\2\2\u01fd\u01fe\t\6\2\2\u01fe")
         buf.write("O\3\2\2\2\u01ff\u0200\t\7\2\2\u0200Q\3\2\2\2\u0201\u0202")
         buf.write("\t\b\2\2\u0202S\3\2\2\2\u0203\u0204\7\36\2\2\u0204U\3")
-        buf.write("\2\2\2\u0205\u0206\7-\2\2\u0206W\3\2\2\2\u0207\u0208\7")
-        buf.write(".\2\2\u0208Y\3\2\2\2\u0209\u020a\7\27\2\2\u020a[\3\2\2")
-        buf.write("\2\u020b\u020c\7/\2\2\u020c]\3\2\2\2\u020d\u020e\t\t\2")
-        buf.write("\2\u020e_\3\2\2\2\u020f\u0210\7\65\2\2\u0210a\3\2\2\2")
-        buf.write("-i|\u0088\u008e\u0093\u0096\u00a7\u00ae\u00b6\u00c2\u00d4")
-        buf.write("\u00db\u00e0\u00e3\u00e9\u00ef\u00f2\u00f8\u00fe\u0108")
-        buf.write("\u010f\u0118\u011b\u0121\u0127\u012a\u0136\u0146\u0160")
-        buf.write("\u0168\u016c\u0172\u0178\u017c\u0180\u01ad\u01b5\u01bc")
-        buf.write("\u01c6\u01cb\u01df\u01e5\u01f9")
+        buf.write("\2\2\2\u0205\u0206\7.\2\2\u0206W\3\2\2\2\u0207\u0208\7")
+        buf.write("/\2\2\u0208Y\3\2\2\2\u0209\u020a\7\27\2\2\u020a[\3\2\2")
+        buf.write("\2\u020b\u020c\7\60\2\2\u020c]\3\2\2\2\u020d\u020e\t\t")
+        buf.write("\2\2\u020e_\3\2\2\2\u020f\u0210\7\66\2\2\u0210a\3\2\2")
+        buf.write("\2-i|\u0088\u008e\u0093\u0096\u00a7\u00ae\u00b6\u00c2")
+        buf.write("\u00d4\u00db\u00e0\u00e3\u00e9\u00ef\u00f2\u00f8\u00fe")
+        buf.write("\u0108\u010f\u0118\u011b\u0121\u0127\u012a\u0136\u0146")
+        buf.write("\u0160\u0168\u016c\u0172\u0178\u017c\u0180\u01ad\u01b5")
+        buf.write("\u01bc\u01c6\u01cb\u01df\u01e5\u01f9")
         return buf.getvalue()
 
 
@@ -268,9 +268,9 @@ class grammarCParser ( Parser ):
                      "']'", "'if'", "'else if'", "'else'", "'while'", "'for'", 
                      "'!'", "'&&'", "'||'", "';'", "'continue'", "'break'", 
                      "'int'", "'main'", "'argc'", "'char'", "'*'", "'argv'", 
-                     "'float'", "'void'", "'+'", "'-'", "'%'", "'/'", "'>'", 
-                     "'=='", "'<='", "'>='", "'!='", "'++'", "'--'", "'&'", 
-                     "'const'", "'='" ]
+                     "'float'", "'void'", "'bool'", "'+'", "'-'", "'%'", 
+                     "'/'", "'>'", "'=='", "'<='", "'>='", "'!='", "'++'", 
+                     "'--'", "'&'", "'const'", "'='" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
@@ -283,8 +283,8 @@ class grammarCParser ( Parser ):
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "DIGIT", "FLT", "STR", "CHAR", 
-                      "BOOL", "ID", "WS", "NL", "BC", "LC" ]
+                      "<INVALID>", "<INVALID>", "<INVALID>", "DIGIT", "FLT", 
+                      "STR", "CHAR", "BOOL", "ID", "WS", "NL", "BC", "LC" ]
 
     RULE_program = 0
     RULE_libraryList = 1
@@ -393,16 +393,17 @@ class grammarCParser ( Parser ):
     T__42=43
     T__43=44
     T__44=45
-    DIGIT=46
-    FLT=47
-    STR=48
-    CHAR=49
-    BOOL=50
-    ID=51
-    WS=52
-    NL=53
-    BC=54
-    LC=55
+    T__45=46
+    DIGIT=47
+    FLT=48
+    STR=49
+    CHAR=50
+    BOOL=51
+    ID=52
+    WS=53
+    NL=54
+    BC=55
+    LC=56
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -513,7 +514,7 @@ class grammarCParser ( Parser ):
                 self.state = 100
                 self.libraryList()
                 pass
-            elif token in [grammarCParser.EOF, grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30]:
+            elif token in [grammarCParser.EOF, grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__31]:
                 self.enterOuterAlt(localctx, 2)
 
                 pass
@@ -886,7 +887,7 @@ class grammarCParser ( Parser ):
             self.state = 148
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30]:
+            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__31]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 140
                 self._errHandler.sync(self)
@@ -1055,7 +1056,7 @@ class grammarCParser ( Parser ):
             self.state = 172
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30]:
+            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__31]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 165
                 self._errHandler.sync(self)
@@ -1180,7 +1181,7 @@ class grammarCParser ( Parser ):
             self.state = 180
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [grammarCParser.T__9, grammarCParser.T__12, grammarCParser.T__15, grammarCParser.T__16, grammarCParser.T__21, grammarCParser.T__22, grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__40, grammarCParser.T__41, grammarCParser.T__43, grammarCParser.DIGIT, grammarCParser.FLT, grammarCParser.STR, grammarCParser.BOOL, grammarCParser.ID]:
+            if token in [grammarCParser.T__9, grammarCParser.T__12, grammarCParser.T__15, grammarCParser.T__16, grammarCParser.T__21, grammarCParser.T__22, grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__31, grammarCParser.T__41, grammarCParser.T__42, grammarCParser.T__44, grammarCParser.DIGIT, grammarCParser.FLT, grammarCParser.STR, grammarCParser.BOOL, grammarCParser.ID]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 176
                 self.statement()
@@ -1590,7 +1591,7 @@ class grammarCParser ( Parser ):
                 self.state = 225
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==grammarCParser.T__43:
+                if _la==grammarCParser.T__44:
                     self.state = 224
                     self.constant()
 
@@ -1617,7 +1618,7 @@ class grammarCParser ( Parser ):
                     self.state = 237
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    while _la==grammarCParser.T__42:
+                    while _la==grammarCParser.T__43:
                         self.state = 234
                         self.reference()
                         self.state = 239
@@ -1638,7 +1639,7 @@ class grammarCParser ( Parser ):
                 self.state = 246
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==grammarCParser.T__43:
+                if _la==grammarCParser.T__44:
                     self.state = 245
                     self.constant()
 
@@ -1677,7 +1678,7 @@ class grammarCParser ( Parser ):
                 self.state = 262
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==grammarCParser.T__43:
+                if _la==grammarCParser.T__44:
                     self.state = 261
                     self.constant()
 
@@ -1788,7 +1789,7 @@ class grammarCParser ( Parser ):
             self.state = 281
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==grammarCParser.T__43:
+            if _la==grammarCParser.T__44:
                 self.state = 280
                 self.constant()
 
@@ -1815,7 +1816,7 @@ class grammarCParser ( Parser ):
                 self.state = 293
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==grammarCParser.T__42:
+                while _la==grammarCParser.T__43:
                     self.state = 290
                     self.reference()
                     self.state = 295
@@ -2864,7 +2865,7 @@ class grammarCParser ( Parser ):
             self.state = 452
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__43, grammarCParser.ID]:
+            if token in [grammarCParser.T__23, grammarCParser.T__26, grammarCParser.T__29, grammarCParser.T__30, grammarCParser.T__31, grammarCParser.T__44, grammarCParser.ID]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 445
                 self.deel1()
@@ -3388,7 +3389,7 @@ class grammarCParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 505
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__23) | (1 << grammarCParser.T__26) | (1 << grammarCParser.T__29) | (1 << grammarCParser.T__30))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__23) | (1 << grammarCParser.T__26) | (1 << grammarCParser.T__29) | (1 << grammarCParser.T__30) | (1 << grammarCParser.T__31))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -3437,7 +3438,7 @@ class grammarCParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 507
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__27) | (1 << grammarCParser.T__31) | (1 << grammarCParser.T__32) | (1 << grammarCParser.T__33) | (1 << grammarCParser.T__34))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__27) | (1 << grammarCParser.T__32) | (1 << grammarCParser.T__33) | (1 << grammarCParser.T__34) | (1 << grammarCParser.T__35))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -3486,7 +3487,7 @@ class grammarCParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 509
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__1) | (1 << grammarCParser.T__35) | (1 << grammarCParser.T__36) | (1 << grammarCParser.T__37) | (1 << grammarCParser.T__38) | (1 << grammarCParser.T__39))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << grammarCParser.T__1) | (1 << grammarCParser.T__36) | (1 << grammarCParser.T__37) | (1 << grammarCParser.T__38) | (1 << grammarCParser.T__39) | (1 << grammarCParser.T__40))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -3535,7 +3536,7 @@ class grammarCParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 511
             _la = self._input.LA(1)
-            if not(_la==grammarCParser.T__40 or _la==grammarCParser.T__41):
+            if not(_la==grammarCParser.T__41 or _la==grammarCParser.T__42):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -3625,7 +3626,7 @@ class grammarCParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 515
-            self.match(grammarCParser.T__42)
+            self.match(grammarCParser.T__43)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -3668,7 +3669,7 @@ class grammarCParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 517
-            self.match(grammarCParser.T__43)
+            self.match(grammarCParser.T__44)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -3754,7 +3755,7 @@ class grammarCParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 521
-            self.match(grammarCParser.T__44)
+            self.match(grammarCParser.T__45)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)

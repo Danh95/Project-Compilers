@@ -197,6 +197,7 @@ types
 	|	'float'
 	|	'char'
 	|	'void'
+	|   'bool'
 	;
 
 operator

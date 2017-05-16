@@ -2,11 +2,10 @@
 
 int main() {
 	//simpel types definitions and declarations and assignments
-	int x;
-	x = 5;
+	int x = 5;
 
 	int c = 95;
-	/*int h = x;
+	int h = x;
 	int d=152;
 	float a = .7;
 	a=.8;
@@ -15,5 +14,5 @@ int main() {
 	float y=7.23;
 	char z;
 	z = 'k';
-    */
+
 }

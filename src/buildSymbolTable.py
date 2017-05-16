@@ -1,6 +1,7 @@
 from grammar.grammarCVisitor import grammarCVisitor
 from grammar.grammarCParser import grammarCParser
 from symbolTable import symbolTable
+import sys
 
 class buildSymbolTable(grammarCVisitor):
 
@@ -13,8 +14,7 @@ class buildSymbolTable(grammarCVisitor):
         self.visitChildren(ctx)
         self.symbol_Table.goToParent()
 
-
-    def visitMain(self, ctx:grammarCParser.MainFuncContext):
+    def visitMainFunc(self, ctx:grammarCParser.MainFuncContext):
         self.symbol_Table.add("Main", "mainfunction", ctx.getChild(0).getText())
         self.symbol_Table.addChild("Main")
         self.visitChildren(ctx)
@@ -46,26 +46,41 @@ class buildSymbolTable(grammarCVisitor):
             if(len(typeList)==len(idList)):
                 for i in range(len(typeList)):
                     #put the right duo in the symbol table
-                    self.add(idList[i], "function argument", typeList[i])
+                    self.symbol_Table.add(idList[i].getText(), "function argument", typeList[i].getText())
 
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
         name = self.visitLValue(ctx.lValue())
+        if(self.symbol_Table.search(ctx.lValue().getText())==True):
+            print("Error: Redeclaration of " + ctx.lValue().getText())
+            sys.exit()
         self.symbol_Table.add(name, "var declaration", self.visitTypes(ctx.types()))
 
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
-        name = self.visitAssignment(ctx.assignment())
+        name = ctx.assignment().normalAssignment().lValue().getText()
+        if(self.symbol_Table.search(name)==True):
+            print("Error: Redefinition of " + name)
+            sys.exit()
         self.symbol_Table.add(name, "var definition", self.visitTypes(ctx.types()))
+        self.visitAssignment(ctx.assignment())
 
     def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
-        self.symbol_Table.search(self.visitLValue(ctx.lValue()))
+        if(self.symbol_Table.search(self.visitLValue(ctx.lValue()))==False):
+            print("Error: Function called before definition, unvalid reference to " + ctx.lValue().getText())
+            sys.exit()
 
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
-        self.symbol_Table.search(ctx.lValue().getText())
-        return self.visitLValue(ctx.lValue())
+        self.symbol_Table.resetType()
+        if(self.symbol_Table.search(ctx.lValue().getText())==False):
+            print("Error: Assignment before declaration, unvalid reference to " + ctx.lValue().getText())
+            sys.exit()
+        self.visitChildren(ctx)
 
     def visitArrayAssignment(self, ctx:grammarCParser.ArrayAssignmentContext):
-        self.symbol_Table.search(ctx.lValue().getText())
-        return self.visitLValue(ctx.lValue())
+
+        if(self.symbol_Table.search(ctx.lValue().getText())==False):
+            print("Error: Assignment before declaration, invalid reference to " + ctx.lValue().getText())
+            sys.exit()
+        self.visitChildren(ctx)
 
     def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
         self.symbol_Table.addChild("if")
@@ -81,7 +96,6 @@ class buildSymbolTable(grammarCVisitor):
 
     def visitElseStatement(self, ctx:grammarCParser.ElseStatementContext):
         self.symbol_Table.addChild("else")
-        self.visitCondition(ctx.condition())
         self.visitBody(ctx.body())
         self.symbol_Table.goToParent()
 
@@ -98,7 +112,31 @@ class buildSymbolTable(grammarCVisitor):
         self.symbol_Table.goToParent()
 
     def visitRValue(self, ctx:grammarCParser.RValueContext):
-        self.symbol_Table.search(ctx.ID())
+        if(ctx.ID()!=None):
+            if(self.symbol_Table.search(ctx.ID())==False):
+                print("Error: Undeclared variable " + ctx.ID().getText())
+                sys.exit()
+
+        if(ctx.DIGIT()!=None):
+            if(self.symbol_Table.prev_type=='int'):
+                print("Error: mismatched type")
+                sys.exit()
+
+        if(ctx.STR()!=None):
+            if (self.symbol_Table.prev_type == 'char'):
+                print("Error: mismatched type")
+                sys.exit()
+
+        if(ctx.FLT()!=None):
+            if (self.symbol_Table.prev_type == 'float'):
+                print("Error: mismatched type")
+                sys.exit()
+
+        if(ctx.BOOL()!=None):
+            if (self.symbol_Table.prev_type == 'bool'):
+                print("Error: mismatched type")
+                sys.exit()
+
 
     def visitLValue(self, ctx:grammarCParser.LValueContext):
         return ctx.getText()

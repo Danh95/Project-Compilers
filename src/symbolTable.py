@@ -1,3 +1,5 @@
+import sys
+
 class Node():
 
     def __init__(self, name, parent):
@@ -17,6 +19,7 @@ class Node():
             raise
 
     def lookup(self, label):
+        #when new definition or declaration
         return self.data.get(label, (0, "error"))
 
 
@@ -26,6 +29,8 @@ class symbolTable():
     def __init__(self):
         self.root = None
         self.currentNode = None
+        self.prev_type = None
+
 
     def addChild(self, scopeName):
         n = Node(scopeName, self.currentNode)
@@ -41,22 +46,40 @@ class symbolTable():
             #add in dict
         self.currentNode.insert(label, type, function)
 
+    def resetType(self):
+        self.prev_type=None
+
     def search(self, label):
-        print(label)
-        print(self.root)
+        #when operation on existing variable or functioncall
         cN = self.currentNode
-        print(cN)
-        temp = self.currentNode.lookup(label)
-        print(temp)
+        #print(label)
+        #print(cN)
+        temp = self.currentNode.lookup(str(label))
+        #print(temp)
         if(temp==(0, "error")):
             #not found in current Node
-            print("times")
             self.currentNode = self.currentNode.parent
-            if(self.search(label)):
+            if (self.currentNode == self.root):
+                self.currentNode = cN
+                return False
+
+            if(self.search(str(label))):
                 self.currentNode = cN
                 return True
-            if (self.currenNode == self.root):
-                raise
+            else:
+                self.currentNode = cN
+                return False
+
         else:
             #found
-            return True
+            if(self.prev_type!=None):
+                if(self.currentNode.data[str(label)][0]==self.prev_type):
+                    return True
+                else:
+                    print("Error: type mismatched")
+                    sys.exit()
+                    
+
+            else:
+                self.prev_type = self.currentNode.data[str(label)][0]
+                return True
