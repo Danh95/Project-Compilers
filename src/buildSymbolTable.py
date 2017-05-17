@@ -8,6 +8,7 @@ class buildSymbolTable(grammarCVisitor):
     def __init__(self, parser):
         self.parser = parser
         self.symbol_Table = symbolTable()
+        self.SP = 0
 
     def visitProgram(self, ctx:grammarCParser.ProgramContext):
         self.symbol_Table.addChild("Program")
@@ -46,21 +47,24 @@ class buildSymbolTable(grammarCVisitor):
             if(len(typeList)==len(idList)):
                 for i in range(len(typeList)):
                     #put the right duo in the symbol table
-                    self.symbol_Table.add(idList[i].getText(), "function argument", typeList[i].getText())
+                    self.symbol_Table.add(idList[i].getText(), "function argument", typeList[i].getText(), self.SP)
+                    self.SP
 
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
         name = self.visitLValue(ctx.lValue())
-        if(self.symbol_Table.search(ctx.lValue().getText())==True):
+        if(self.symbol_Table.search(ctx.lValue().getText())!=False):
             print("Error: Redeclaration of " + ctx.lValue().getText())
             sys.exit()
-        self.symbol_Table.add(name, "var declaration", self.visitTypes(ctx.types()))
+        self.symbol_Table.add(name, "var declaration", self.visitTypes(ctx.types()), self.SP)
+        self.SP += 1
 
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
         name = ctx.assignment().normalAssignment().lValue().getText()
-        if(self.symbol_Table.search(name)==True):
+        if(self.symbol_Table.search(name)!=False):
             print("Error: Redefinition of " + name)
             sys.exit()
-        self.symbol_Table.add(name, "var definition", self.visitTypes(ctx.types()))
+        self.symbol_Table.add(name, "var definition", self.visitTypes(ctx.types()), self.SP)
+        self.SP += 1
         self.visitAssignment(ctx.assignment())
 
     def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
@@ -118,23 +122,23 @@ class buildSymbolTable(grammarCVisitor):
                 sys.exit()
 
         if(ctx.DIGIT()!=None):
-            if(self.symbol_Table.prev_type=='int'):
-                print("Error: mismatched type")
+            if(self.symbol_Table.prev_type != 'int'):
+                print("Error: mismatched type, expected int")
                 sys.exit()
 
         if(ctx.STR()!=None):
-            if (self.symbol_Table.prev_type == 'char'):
-                print("Error: mismatched type")
+            if (self.symbol_Table.prev_type != 'char'):
+                print("Error: mismatched type, expected char")
                 sys.exit()
 
         if(ctx.FLT()!=None):
-            if (self.symbol_Table.prev_type == 'float'):
-                print("Error: mismatched type")
+            if (self.symbol_Table.prev_type != 'float'):
+                print("Error: mismatched type, expected float")
                 sys.exit()
 
         if(ctx.BOOL()!=None):
-            if (self.symbol_Table.prev_type == 'bool'):
-                print("Error: mismatched type")
+            if (self.symbol_Table.prev_type != 'bool'):
+                print("Error: mismatched type, expected bool")
                 sys.exit()
 
 

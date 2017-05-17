@@ -10,10 +10,10 @@ class Node():
     def __str__(self):
         return str(self.data)
 
-    def insert(self, label, type, function):
+    def insert(self, label, type, function, SP):
         values = self.lookup(label)
         if(values[1]!=function and values[1]!="function definition"):
-            self.data[label] = (type, function)
+            self.data[label] = (type, function, SP)
         else:
             print("Error: Duplicate instance of " + str(function))
             raise
@@ -42,9 +42,9 @@ class symbolTable():
         if(self.currentNode!=self.root):
             self.currentNode = self.currentNode.parent
 
-    def add(self, label, function, type):
+    def add(self, label, function, type, SP=None):
             #add in dict
-        self.currentNode.insert(label, type, function)
+        self.currentNode.insert(label, type, function, SP)
 
     def resetType(self):
         self.prev_type=None
@@ -53,7 +53,6 @@ class symbolTable():
         #when operation on existing variable or functioncall
         cN = self.currentNode
         #print(label)
-        #print(cN)
         temp = self.currentNode.lookup(str(label))
         #print(temp)
         if(temp==(0, "error")):
@@ -61,25 +60,28 @@ class symbolTable():
             self.currentNode = self.currentNode.parent
             if (self.currentNode == self.root):
                 self.currentNode = cN
+                print(cN)
                 return False
 
-            if(self.search(str(label))):
+            if(self.search(str(label))!=False):
                 self.currentNode = cN
-                return True
+                print(cN)
+                return temp
             else:
                 self.currentNode = cN
+                print(cN)
                 return False
 
         else:
             #found
             if(self.prev_type!=None):
-                if(self.currentNode.data[str(label)][0]==self.prev_type):
-                    return True
+                if(temp[0]==self.prev_type):
+                    return temp
                 else:
-                    print("Error: type mismatched")
+                    print("Error: type mismatched" )
                     sys.exit()
                     
 
             else:
-                self.prev_type = self.currentNode.data[str(label)][0]
-                return True
+                self.prev_type = temp[0]
+                return temp

@@ -7,6 +7,7 @@ from grammar.grammarCParser import grammarCParser
 from grammar.grammarCVisitor import grammarCVisitor
 from buildAST import buildAST
 from buildSymbolTable import buildSymbolTable
+from translate import translate
 
 """def make_AST(st, ctx):
     syntaxtree = grammarCVisitor(st)
@@ -22,7 +23,10 @@ def main(argv):
     AST.visitProgram(tree)
     Symbol_Table = buildSymbolTable(parser)
     Symbol_Table.visitProgram(tree)
-    #Symbol_Table.symbol_Table.search("x")
+    print("after building\n:")
+    print(Symbol_Table.symbol_Table.currentNode)
+    Trans = translate(Symbol_Table.symbol_Table, argv[1])
+    Trans.visitProgram(tree)
 
 if __name__ == '__main__':
     main(sys.argv)
