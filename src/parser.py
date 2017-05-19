@@ -21,12 +21,9 @@ def main(argv):
     tree = parser.program()
     AST = buildAST(parser)
     AST.visitProgram(tree)
-    Symbol_Table = buildSymbolTable(parser)
+    Symbol_Table = buildSymbolTable(parser, argv[1])
     Symbol_Table.visitProgram(tree)
-    print("after building\n:")
-    print(Symbol_Table.symbol_Table.currentNode)
-    Trans = translate(Symbol_Table.symbol_Table, argv[1])
-    Trans.visitProgram(tree)
+
 
 if __name__ == '__main__':
     main(sys.argv)

@@ -27,7 +27,17 @@ graph AST {
 10 -- 12;
 13[label="a"];
 12 -- 13;
-14[label="5"];
+14[label="Operation
+*"];
 12 -- 14;
+15[label="5"];
+14 -- 15;
+16[label="Operation
+/"];
+14 -- 16;
+17[label="4"];
+16 -- 17;
+18[label="4"];
+16 -- 18;
 
 }

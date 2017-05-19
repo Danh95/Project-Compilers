@@ -60,16 +60,13 @@ class symbolTable():
             self.currentNode = self.currentNode.parent
             if (self.currentNode == self.root):
                 self.currentNode = cN
-                print(cN)
                 return False
 
             if(self.search(str(label))!=False):
                 self.currentNode = cN
-                print(cN)
                 return temp
             else:
                 self.currentNode = cN
-                print(cN)
                 return False
 
         else:
