@@ -96,13 +96,9 @@ class buildAST(grammarCVisitor):
 
 
     def visitOperation(self, ctx: grammarCParser.OperationContext):
-        if(ctx.getChildCount()==3):
+        if(ctx.getChild(0).getText()!='('):
             op = self.visitOperator(ctx.operator())
-
-        else:
-            op = self.visitDeincrement(ctx.deincrement())
-
-        self.file.newChild("Operation\n" + op)
+            self.file.newChild("Operation\n" + op)
         self.visitChildren(ctx)
         self.file.goBack()
 

@@ -65,6 +65,7 @@ statement
 	|	conditional
 	|	operation endStatement
 	|	returnStatement
+	|   plusplus
 	|	kw
 	;
 
@@ -147,7 +148,7 @@ loop
 
 condition
 	:	rValue comparison rValue
-	|	'!'? rValue  //als '!'? dan wordt rValue als condition beschouwd in niet condition context
+	|	'!'? rValue
 	|	condition ('&&' | '||') condition
 	| 	'!' '(' condition ')'
 	;
@@ -174,7 +175,13 @@ deel3
 operation
 	:	rValue operator rValue
 	|	rValue operator operation
-	|	rValue deincrement
+	|   '(' operation ')'
+    |   '(' operation ')' operator operation
+    |   '(' operation ')' operator rValue
+	;
+
+plusplus
+    :   rValue deincrement
 	|	deincrement rValue
 	;
 

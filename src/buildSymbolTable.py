@@ -176,17 +176,27 @@ class buildSymbolTable(grammarCVisitor):
         return ctx.getText()
         
     def visitOperation(self, ctx:grammarCParser.OperationContext):
-        if(ctx.rValue()[0].ID()!=None):
-            t = self.symbol_Table.search(ctx.rValue()[0].getText())
-        elif(ctx.rValue()[0].FLT()!=None):
-            t = ["float"]
-        elif(ctx.rValue()[0].DIGIT()!=None):
-            t = ["int"]
-        else:
-            sys.exit()
+        if(ctx.getChild(1)!=ctx.operator()):
+            s_prior = self.op_prior
+            s_prev = self.op_prev
+            self.op_prior = False
 
-        N = self.T[t[0]]
-        if(ctx.getChildCount()==3):
+            self.visitOperation((ctx.operation())[0])
+            self.op_prior = s_prior
+            self.op_prev = s_prev
+
+        if(len(ctx.rValue())!=0):
+            if(ctx.rValue()[0].ID()!=None):
+                t = self.symbol_Table.search(ctx.rValue()[0].getText())
+            elif(ctx.rValue()[0].FLT()!=None):
+                t = ["float"]
+            elif(ctx.rValue()[0].DIGIT()!=None):
+                t = ["int"]
+            else:
+                sys.exit()
+
+            N = self.T[t[0]]
+
             op = ctx.operator().getText()
             if(op=="*"):
                 self.visitRValue(ctx.rValue()[0])
@@ -195,7 +205,7 @@ class buildSymbolTable(grammarCVisitor):
                 self.op_prev = "mull "
                 self.op_prior = True
                 self.visit(ctx.getChild(2))
-                if(len(ctx.rValue()) == 2 and self.op_prior == True):
+                if((ctx.getChild(ctx.getChildCount()-1) in ctx.rValue()) and self.op_prior == True):
                     self.file.write(self.op_prev + str(N) + "\n")
             elif(op=="/"):
                 self.visitRValue(ctx.rValue()[0])
@@ -204,7 +214,7 @@ class buildSymbolTable(grammarCVisitor):
                 self.op_prev = "div "
                 self.op_prior = True
                 self.visit(ctx.getChild(2))
-                if (len(ctx.rValue()) == 2 and self.op_prior == True):
+                if((ctx.getChild(ctx.getChildCount()-1) in ctx.rValue()) and self.op_prior == True):
                     self.file.write(self.op_prev + str(N) + "\n")
 
             elif(op=="+"):
@@ -222,8 +232,16 @@ class buildSymbolTable(grammarCVisitor):
                 self.visit(ctx.getChild(2))
                 self.file.write("sub " + str(N) + "\n")
 
-        elif(ctx.getChildCount()==2):
-            self.visitDeincrement(ctx.deincrement())
+
+
+        else:
+            s_prior = self.op_prior
+            s_prev = self.op_prev
+            self.op_prior = False
+
+            self.visitOperation((ctx.operation())[1])
+            self.op_prior = s_prior
+            self.op_prev = s_prev
 
     def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
         if(ctx.getText()=='++'):
