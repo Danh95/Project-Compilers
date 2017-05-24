@@ -20,11 +20,13 @@ class buildSymbolTable(grammarCVisitor):
 
         self.T = {'pointer':'a', 'bool':'b', 'char':'c', 'int':'i', 'float':'r'}
 
-        self.op_prior = False
+        self.op_state = False
         self.op_prev = None
+        self.N = None
 
     def visitProgram(self, ctx:grammarCParser.ProgramContext):
         self.symbol_Table.addChild("Program")
+        self.file.write("ujp start\n")
         self.visitChildren(ctx)
         self.symbol_Table.goToParent()
 
@@ -40,6 +42,7 @@ class buildSymbolTable(grammarCVisitor):
         name = self.visitLValue(ctx.lValue())
         self.symbol_Table.add(name, "function definition", self.visitTypes(ctx.types()))
         self.symbol_Table.addChild(name)
+        self.file.write(name +":\n")
         self.visitChildren(ctx)
         self.symbol_Table.goToParent()
 
@@ -82,6 +85,7 @@ class buildSymbolTable(grammarCVisitor):
             sys.exit()
         self.symbol_Table.add(name, "var definition", self.visitTypes(ctx.types()), self.SP)
         self.SP += 1
+        self.file.write("ldc " + str(self.T[ctx.types().getText()]) + " 0\n")
         self.visitAssignment(ctx.assignment())
 
     def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
@@ -176,75 +180,110 @@ class buildSymbolTable(grammarCVisitor):
         return ctx.getText()
         
     def visitOperation(self, ctx:grammarCParser.OperationContext):
-        if(ctx.getChild(1)!=ctx.operator()):
-            s_prior = self.op_prior
-            s_prev = self.op_prev
-            self.op_prior = False
+        print(ctx.getText())
+        if (ctx.operator() != None):
+            print(ctx.operator().getText())
+            op = ctx.operator().getText()
+            if (self.op_state == True):
+                self.visit((ctx.nextOperation())[0])
+                self.file.write(self.op_prev + str(self.N) + "\n")
+            else:
+                self.visit((ctx.nextOperation())[0])
+            if (op == "*"):
+                self.op_state = True
+                self.op_prev = "mull "
+                self.visit((ctx.nextOperation())[1])
+                if (self.op_state == True):
+                    self.file.write(self.op_prev + str(self.N) + "\n")
 
-            self.visitOperation((ctx.operation())[0])
-            self.op_prior = s_prior
-            self.op_prev = s_prev
 
-        if(len(ctx.rValue())!=0):
-            if(ctx.rValue()[0].ID()!=None):
-                t = self.symbol_Table.search(ctx.rValue()[0].getText())
-            elif(ctx.rValue()[0].FLT()!=None):
+            elif (op == "/"):
+                self.op_state = True
+                self.op_prev = "div "
+                self.visit((ctx.nextOperation())[1])
+                if (self.op_state == True):
+                    self.file.write(self.op_prev + str(self.N) + "\n")
+
+
+            elif (op == "+"):
+                self.op_state = False;
+                self.visit((ctx.nextOperation())[1])
+                if (self.op_state == True):
+                    self.file.write(self.op_prev + str(self.N) + "\n")
+                self.file.write("add " + str(self.N) + "\n")
+
+            elif (op == "-"):
+                self.op_state = False;
+                self.visit((ctx.nextOperation())[1])
+                if (self.op_state == True):
+                    self.file.write(self.op_prev + str(self.N) + "\n")
+                self.file.write("sub " + str(self.N) + "\n")
+
+
+    def visitNextOperation(self, ctx:grammarCParser.NextOperationContext):
+        print(ctx.getText())
+        if(ctx.getChildCount()==1):
+            if(ctx.rValue().ID()!=None):
+                t = self.symbol_Table.search(ctx.rValue().getText())
+                if(t==False):
+                    print("Error: " + ctx.rValue().getText() + " is not defined")
+                    sys.exit()
+            elif(ctx.rValue().FLT()!=None):
                 t = ["float"]
-            elif(ctx.rValue()[0].DIGIT()!=None):
+            elif(ctx.rValue().DIGIT()!=None):
                 t = ["int"]
             else:
+                if(ctx.rValue().STR() != None):
+                    print("Error: operation not defined for string" )
+                elif(ctx.rValue().CHAR() != None):
+                    print("Error: operation not defined for char" )
                 sys.exit()
 
-            N = self.T[t[0]]
+            self.N = self.T[t[0]]
 
+            self.visitChildren(ctx)
+
+        elif(ctx.operator()!=None):
             op = ctx.operator().getText()
-            if(op=="*"):
-                self.visitRValue(ctx.rValue()[0])
-                if(self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
+            if(self.op_state==True):
+                self.visit(ctx.rValue())
+                self.file.write(self.op_prev + str(self.N) + "\n")
+            else:
+                self.visit(ctx.rValue())
+            if (op == "*"):
+                self.op_state = True
                 self.op_prev = "mull "
-                self.op_prior = True
-                self.visit(ctx.getChild(2))
-                if((ctx.getChild(ctx.getChildCount()-1) in ctx.rValue()) and self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
-            elif(op=="/"):
-                self.visitRValue(ctx.rValue()[0])
-                if (self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
+                self.visit(ctx.nextOperation())
+
+
+            elif (op == "/"):
+                self.op_state = True
                 self.op_prev = "div "
-                self.op_prior = True
-                self.visit(ctx.getChild(2))
-                if((ctx.getChild(ctx.getChildCount()-1) in ctx.rValue()) and self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
-
-            elif(op=="+"):
-                self.visitRValue(ctx.rValue()[0])
-                if (self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
-                self.op_prior = False
-                self.visit(ctx.getChild(2))
-                self.file.write("add " + str(N) + "\n")
-            elif(op=="-"):
-                self.visitRValue(ctx.rValue()[0])
-                if (self.op_prior == True):
-                    self.file.write(self.op_prev + str(N) + "\n")
-                self.op_prior = False
-                self.visit(ctx.getChild(2))
-                self.file.write("sub " + str(N) + "\n")
+                self.visit(ctx.nextOperation())
 
 
+            elif (op == "+"):
+                self.op_state = False;
+                self.visit(ctx.nextOperation())
+                self.file.write("add " + str(self.N) + "\n")
 
+            elif (op == "-"):
+                self.op_state = False;
+                self.visit(ctx.nextOperation())
+                self.file.write("sub " + str(self.N) + "\n")
         else:
-            s_prior = self.op_prior
-            s_prev = self.op_prev
-            self.op_prior = False
+            tempstateSave = self.op_state
+            tempOPSave = self.op_prev
+            self.op_state = False
+            self.visitChildren(ctx)
+            if (self.op_state == True):
+                self.file.write(self.op_prev + str(self.N) + "\n")
+                self.op_state = False
+            self.op_state = tempstateSave
+            self.op_prev = tempOPSave
+            if (self.op_state == True):
+                self.file.write(self.op_prev + str(self.N) + "\n")
+                self.op_state = False
 
-            self.visitOperation((ctx.operation())[1])
-            self.op_prior = s_prior
-            self.op_prev = s_prev
 
-    def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
-        if(ctx.getText()=='++'):
-            pass
-        else:
-            pass
+

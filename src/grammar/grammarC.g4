@@ -26,6 +26,8 @@ libname
 funcDefList
 	:	funcDef funcDefList
 	|   funcDecl funcDefList
+	|   definition funcDefList
+	|   declaration funcDefList
 	|	mainFunc
 	|
 	;
@@ -173,12 +175,17 @@ deel3
 	;
 
 operation
-	:	rValue operator rValue
-	|	rValue operator operation
-	|   '(' operation ')'
-    |   '(' operation ')' operator operation
-    |   '(' operation ')' operator rValue
-	;
+    :   nextOperation operator nextOperation
+    |   '(' operation ')'
+    ;
+
+nextOperation
+    :   rValue
+    |   rValue operator nextOperation
+    |   '(' nextOperation ')'
+    ;
+
+
 
 plusplus
     :   rValue deincrement
@@ -262,12 +269,12 @@ lValue
 	;
 
 DIGIT
-	:	'-'?[0-9]+
+	:	[0-9]+
 	;
 
 FLT
-	:	'-'?[0-9]*'.'[0-9]+
-	|	'-'?[0-9]+'.'[0-9]*
+	:	[0-9]*'.'[0-9]+
+	|	[0-9]+'.'[0-9]*
 	;
 
 STR

@@ -314,6 +314,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#nextOperation.
+    def enterNextOperation(self, ctx:grammarCParser.NextOperationContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#nextOperation.
+    def exitNextOperation(self, ctx:grammarCParser.NextOperationContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#plusplus.
     def enterPlusplus(self, ctx:grammarCParser.PlusplusContext):
         pass
