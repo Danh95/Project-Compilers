@@ -57,17 +57,13 @@ class symbolTable():
         #print(temp)
         if(temp==(0, "error")):
             #not found in current Node
-            self.currentNode = self.currentNode.parent
-            if (self.currentNode == self.root):
-                self.currentNode = cN
-                return False
-
-            if(self.search(str(label))!=False):
-                self.currentNode = cN
-                return temp
+            if(self.currentNode!=self.root):
+                self.currentNode = self.currentNode.parent
+                return self.search(str(label))
             else:
                 self.currentNode = cN
                 return False
+
 
         else:
             #found
@@ -75,7 +71,7 @@ class symbolTable():
                 if(temp[0]==self.prev_type):
                     return temp
                 else:
-                    print("Error: type mismatched" )
+                    print("Error: mismatched type, expected " + str(self.prev_type) + " received " + str(temp[0])  )
                     sys.exit()
                     
 

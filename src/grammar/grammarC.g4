@@ -180,12 +180,16 @@ operation
     ;
 
 nextOperation
-    :   rValue
-    |   rValue operator nextOperation
+    :   baseOperation
+    |   baseOperation operator nextOperation
     |   '(' nextOperation ')'
     ;
 
-
+baseOperation
+    :   rValue
+    |   rValue operator baseOperation
+    |   '(' baseOperation ')'
+    ;
 
 plusplus
     :   rValue deincrement
@@ -275,6 +279,7 @@ DIGIT
 FLT
 	:	[0-9]*'.'[0-9]+
 	|	[0-9]+'.'[0-9]*
+	|   [0-9]+
 	;
 
 STR
@@ -288,7 +293,9 @@ CHAR
 
 BOOL
 	:	'true'
+	|   '1'
 	|	'false'
+	|   '0'
 	;
 
 ID

@@ -184,6 +184,11 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#baseOperation.
+    def visitBaseOperation(self, ctx:grammarCParser.BaseOperationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#plusplus.
     def visitPlusplus(self, ctx:grammarCParser.PlusplusContext):
         return self.visitChildren(ctx)

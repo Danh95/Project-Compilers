@@ -33,17 +33,13 @@ class buildAST(grammarCVisitor):
 
 
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
-        self.file.newChild("Declaration")
-        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()))
-        self.file.goBack()
+        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()) + " Dcl")
         self.file.newChild(ctx.lValue().getText())
         self.file.goBack()
         self.file.goBack()
 
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
-        self.file.newChild("Definition")
-        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()))
-        self.file.goBack()
+        self.file.newChild(self.visitConstant(ctx.constant()) + " " + ctx.types().getText() + " " + self.visitPointer(ctx.pointer()) + " Def")
         self.visitChildren(ctx)
         self.file.goBack()
 
@@ -97,18 +93,26 @@ class buildAST(grammarCVisitor):
 
     def visitOperation(self, ctx: grammarCParser.OperationContext):
         if(ctx.getChild(0).getText()!='('):
-            op = self.visitOperator(ctx.operator())
+            op = ctx.operator().getText()
             self.file.newChild("Operation\n" + op)
         self.visitChildren(ctx)
         self.file.goBack()
 
-    def visitDeincrement(self, ctx:grammarCParser.DeincrementContext):
-        return ctx.getText()
+    def visitNextOperation(self, ctx:grammarCParser.NextOperationContext):
+        if (ctx.operator() != None):
+            op = ctx.operator().getText()
+            self.file.newChild("Operation\n" + op)
+        self.visitChildren(ctx)
+        if (ctx.getChild(0).getText() == '('):
+            self.file.goBack()
 
-    
-    def visitOperator(self, ctx:grammarCParser.OperatorContext):
-        return ctx.getText()
-
+    def visitBaseOperation(self, ctx:grammarCParser.BaseOperationContext):
+        if (ctx.operator() != None):
+            op = ctx.operator().getText()
+            self.file.newChild("Operation\n" + op)
+        self.visitChildren(ctx)
+        if (ctx.getChild(0).getText() == '('):
+            self.file.goBack()
 
     def visitComparison(self, ctx: grammarCParser.ComparisonContext):
         self.visitChildren(ctx)
@@ -116,12 +120,12 @@ class buildAST(grammarCVisitor):
 
 
     def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
-        self.file.newChild("if\n" + self.visitCondition(ctx.condition()))
+        self.file.newChild("if\n" + ctx.condition().getText())
         self.visitBody(ctx.body())
         self.file.goBack()
 
     def visitElifStatement(self, ctx:grammarCParser.ElifStatementContext):
-        self.file.newChild("else if\n" + self.visitCondition(ctx.condition()))
+        self.file.newChild("else if\n" + ctx.condition().getText())
         self.visitBody(ctx.body())
         self.file.goBack()
 
@@ -131,20 +135,14 @@ class buildAST(grammarCVisitor):
         self.file.goBack()
 
     def visitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
-        self.file.newChild("while\n" + self.visitCondition(ctx.condition()))
+        self.file.newChild("while\n" + ctx.condition().getText())
         self.visitBody(ctx.body())
         self.file.goBack()
 
     def visitLoop(self, ctx:grammarCParser.LoopContext):
-        self.file.newChild("for\n" + self.visitForCondition(ctx.forCondition()))
+        self.file.newChild("for\n" + ctx.forCondition().getText())
         self.visitBody(ctx.body())
         self.file.goBack()
-
-    def visitForCondition(self, ctx:grammarCParser.ForConditionContext):
-        return ctx.getText()
-
-    def visitCondition(self, ctx:grammarCParser.ConditionContext):
-        return ctx.getText()
 
     def visitPointer(self, ctx:grammarCParser.PointerContext):
         if(ctx==None or ctx==[]):

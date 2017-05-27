@@ -1,13 +1,39 @@
+graph AST {
 0[label="program"];
-1[label="Main"];
+1[label="doSomething()"];
 0 -- 1;
-2[label="Declaration"];
+2[label="Assignment"];
 1 -- 2;
-3[label=" int "];
+3[label="y"];
 2 -- 3;
-4[label="x"];
+4[label="Operation
+*"];
 2 -- 4;
-5[label="Assignment"];
-1 -- 5;
-6[label="x"];
-5 -- 6;
+5[label="y"];
+4 -- 5;
+6[label="2"];
+4 -- 6;
+7[label="Return"];
+1 -- 7;
+8[label="y"];
+7 -- 8;
+9[label="Main"];
+0 -- 9;
+10[label=" int  Def"];
+9 -- 10;
+11[label="Assignment"];
+10 -- 11;
+12[label="y"];
+11 -- 12;
+13[label="5"];
+11 -- 13;
+14[label=" int  Def"];
+9 -- 14;
+15[label="Assignment"];
+14 -- 15;
+16[label="x"];
+15 -- 16;
+17[label="doSomething()"];
+15 -- 17;
+
+}
