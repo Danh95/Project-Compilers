@@ -49,7 +49,7 @@ class symbolTable():
     def resetType(self):
         self.prev_type=None
 
-    def search(self, label):
+    def search(self, label, st=0):
         #when operation on existing variable or functioncall
         cN = self.currentNode
         #print(label)
@@ -59,7 +59,8 @@ class symbolTable():
             #not found in current Node
             if(self.currentNode!=self.root):
                 self.currentNode = self.currentNode.parent
-                return self.search(str(label))
+                st += 1
+                return self.search(str(label), st)
             else:
                 self.currentNode = cN
                 return False
@@ -68,8 +69,9 @@ class symbolTable():
         else:
             #found
             if(self.prev_type!=None):
+
                 if(temp[0]==self.prev_type):
-                    return temp
+                    return (temp[0], temp[1], temp[2], st)
                 else:
                     print("Error: mismatched type, expected " + str(self.prev_type) + " received " + str(temp[0])  )
                     sys.exit()
@@ -77,4 +79,4 @@ class symbolTable():
 
             else:
                 self.prev_type = temp[0]
-                return temp
+                return (temp[0], temp[1], temp[2], st)

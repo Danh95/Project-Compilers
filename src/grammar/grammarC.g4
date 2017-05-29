@@ -151,7 +151,7 @@ loop
 condition
 	:	rValue comparison rValue
 	|	'!'? rValue
-	|	condition ('&&' | '||') condition
+	//|	condition ('&&' | '||') condition
 	| 	'!' '(' condition ')'
 	;
 
@@ -245,7 +245,7 @@ pointer
 	;
 
 reference
-	: '&'
+	:   '&'
 	;
 
 constant
@@ -265,7 +265,9 @@ rValue		//literal
 	|	FLT 
 	|	STR
 	|	BOOL
-	|	ID
+	|	pointer+ ID
+	|   reference+ ID
+	|   ID
 	;
 
 lValue
