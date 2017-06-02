@@ -7,4 +7,6 @@ int main() {
 		something
 		here
 	*/
+	int i;
+	scanf('%i', i);
 }

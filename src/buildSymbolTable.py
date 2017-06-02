@@ -36,6 +36,19 @@ class buildSymbolTable(grammarCVisitor):
         self.visitChildren(ctx)
         self.symbol_Table.goToParent()
 
+    def visitLibname(self, ctx:grammarCParser.LibnameContext):
+        if(ctx.getText()=='stdio'):
+            self.symbol_Table.add("scanf", "function definition", 'int')
+            self.file.write("scanfd:\nin d\nsto i\n")
+            self.file.write("scanfi:\nin i\nsto i\n")
+            self.file.write("scanfc:\nin c\nsto c\n")
+            #scanfs voor string met array
+            self.symbol_Table.add("printf", "function definition", 'int')
+            self.file.write("printfd:\nout i\n")
+            self.file.write("printfi:\nout i\n")
+            self.file.write("printfc:\nout c\n")
+
+
     def visitMainFunc(self, ctx:grammarCParser.MainFuncContext):
         self.symbol_Table.add("Main", "mainfunction", ctx.getChild(0).getText())
         self.symbol_Table.addChild("Main")
@@ -121,27 +134,63 @@ class buildSymbolTable(grammarCVisitor):
     def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
         name = ctx.lValue().getText()
         arg = ctx.parList().rValue()
-        for i in arg:
-            if(i.ID()!=None):
-                s = self.symbol_Table.search(i.getText())
-                name += str(s[0])
-            elif(i.DIGIT()!=None):
-                name += 'int'
-            elif (i.BOOL() != None):
-                name += 'bool'
-            elif (i.STR() != None):
-                name += 'char'
-            elif (i.FLT() != None):
-                name += 'float'
+        stdio = {'s' : 'string', 'd' : 'int', 'i' : 'int', 'c' : 'char'}
+        scanf_d = {'s' : 'scanfs','d' : 'scanfd','i' : 'scanfi','c' : 'scanfc'}
+        if(name=='scanf'):
+            #herdefinieren van scanf zonder parameters kan voor problemen zorgen
+            print(ctx.getText())
+            string = arg[0].getText()
+            speci = []
+            for i in range(0, len(string)):
+                if(string[i]=='%'):
+                    speci.append(string[i+1])
+            if(len(speci)!=(len(arg)-1)):
+                print("Error: incorrect number of specifiers")
+                sys.exit()
+            for i in arg[1:]:
+                var = i.getText()
+                t = speci.pop(0)
+                var.replace("*", "")
+                var.replace("&", "")
+                entry = self.symbol_Table.search(var)
+                print("hu")
+                if(entry==False):
+                    print("Error: " + i.getText() + " does not exit")
+                    sys.exit()
+                else:
+                    #type check
+                    if(entry[0]!=stdio[t]):
+                        print("Error: specifier does not match variable")
+                        sys.exit()
+                self.visitRValue(i)
+                print('wtf')
+                self.file.write("ujp " + scanf_d[t] + "\n")
 
-        st = self.symbol_Table.search(name)
-        if(st==False):
-            print("Error: Function called before definition, unvalid reference to " + ctx.lValue().getText())
-            sys.exit()
-        self.file.write("mst " + str(st[3]) + "\n")
-        self.visit(ctx.parList())
-        self.file.write("cup " + str(len(arg)) + " "+ ctx.lValue().getText() + "\n")
-                #TODO len(arg)+space of array
+        elif(name=='printf'):
+            pass
+
+        else:
+            for i in arg:
+                if(i.ID()!=None):
+                    s = self.symbol_Table.search(i.getText())
+                    name += str(s[0])
+                elif(i.DIGIT()!=None):
+                    name += 'int'
+                elif (i.BOOL() != None):
+                    name += 'bool'
+                elif (i.STR() != None):
+                    name += 'char'
+                elif (i.FLT() != None):
+                    name += 'float'
+
+            st = self.symbol_Table.search(name)
+            if(st==False):
+                print("Error: Function called before definition, unvalid reference to " + ctx.lValue().getText())
+                sys.exit()
+            self.file.write("mst " + str(st[3]) + "\n")
+            self.visit(ctx.parList())
+            self.file.write("cup " + str(len(arg)) + " "+ ctx.lValue().getText() + "\n")
+                    #TODO len(arg)+space of array
 
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
         self.symbol_Table.resetType()
