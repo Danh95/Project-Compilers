@@ -19,8 +19,8 @@ def main(argv):
     stream = CommonTokenStream(lexer)
     parser = grammarCParser(stream)
     tree = parser.program()
-    AST = buildAST(parser)
-    AST.visitProgram(tree)
+    #AST = buildAST(parser)
+    #AST.visitProgram(tree)
     Symbol_Table = buildSymbolTable(parser, argv[1])
     Symbol_Table.visitProgram(tree)
 

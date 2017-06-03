@@ -1,12 +1,11 @@
-graph AST {
 0[label="program"];
 1[label="Main"];
 0 -- 1;
-2[label=" int  Dcl"];
+2[label=" float  Def"];
 1 -- 2;
-3[label="i"];
+3[label="Assignment"];
 2 -- 3;
-4[label="scanf()"];
-1 -- 4;
-
-}
+4[label="u"];
+3 -- 4;
+5[label="6"];
+3 -- 5;

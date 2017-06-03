@@ -107,15 +107,6 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by grammarCParser#statements.
-    def enterStatements(self, ctx:grammarCParser.StatementsContext):
-        pass
-
-    # Exit a parse tree produced by grammarCParser#statements.
-    def exitStatements(self, ctx:grammarCParser.StatementsContext):
-        pass
-
-
     # Enter a parse tree produced by grammarCParser#statement.
     def enterStatement(self, ctx:grammarCParser.StatementContext):
         pass
@@ -149,6 +140,15 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#declaration.
     def exitDeclaration(self, ctx:grammarCParser.DeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#arrayDecl.
+    def enterArrayDecl(self, ctx:grammarCParser.ArrayDeclContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#arrayDecl.
+    def exitArrayDecl(self, ctx:grammarCParser.ArrayDeclContext):
         pass
 
 

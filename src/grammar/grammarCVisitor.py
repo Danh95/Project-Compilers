@@ -64,11 +64,6 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by grammarCParser#statements.
-    def visitStatements(self, ctx:grammarCParser.StatementsContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by grammarCParser#statement.
     def visitStatement(self, ctx:grammarCParser.StatementContext):
         return self.visitChildren(ctx)
@@ -86,6 +81,11 @@ class grammarCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by grammarCParser#declaration.
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#arrayDecl.
+    def visitArrayDecl(self, ctx:grammarCParser.ArrayDeclContext):
         return self.visitChildren(ctx)
 
 

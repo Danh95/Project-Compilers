@@ -51,12 +51,8 @@ argList
 	;
 
 body
-	:	statements
-	;
-
-statements
-	:	statement statements
-	|
+	:	statement body
+	|   statement
 	;
 	
 statement
@@ -68,8 +64,9 @@ statement
 	|	operation endStatement
 	|	returnStatement
 	|   plusplus
-	|	kw
+	|   kw
 	;
+
 
 returnStatement
 	:	'return' functionCall
@@ -86,8 +83,11 @@ parList
 
 declaration
 	:	constant? types (pointer* | reference*) lValue endStatement
-	|	constant? types pointer* lValue '[' (DIGIT | ID) ']' endStatement	
-	|	constant? types '(' pointer+ lValue ')' '[' (DIGIT | ID) ']' endStatement
+	|   arrayDecl
+	;
+
+arrayDecl
+    :	constant? types lValue '[' (DIGIT | ID) ']' endStatement
 	;
 
 
@@ -112,8 +112,6 @@ normalAssignment
 
 arrayAssignment
 	:	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
-	|	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
-	|	lValue '[' (DIGIT | ID) ']' assign arrayOptions endStatement
 	;
 
 arrayOptions
@@ -265,9 +263,8 @@ rValue		//literal
 	|	FLT 
 	|	STR
 	|	BOOL
-	|	pointer+ ID
-	|   reference+ ID
-	|   ID
+	|   (pointer* | reference*) ID'[' (DIGIT|ID) ']'
+	|	(pointer* | reference*) ID
 	;
 
 lValue
@@ -286,6 +283,8 @@ FLT
 
 STR
 	:	'\'' (~'"' | '\'' )* '\''
+	|	'"' (~'"' | '\'' )* '"'
+
 	|	CHAR	
 	;
 

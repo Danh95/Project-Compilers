@@ -8,5 +8,5 @@ int main() {
 		here
 	*/
 	int i;
-	scanf('%i', i);
+	printf("hallo\\: %i", i);
 }
