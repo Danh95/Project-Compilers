@@ -2,7 +2,8 @@ grammar grammarC;
 
 
 program
-	:	libraryList funcDefList
+	:	libraryList globalList funcDefList
+	    //global def and dcl before function def and decl
 	;
 
 libraryList
@@ -23,17 +24,20 @@ libname
 	|	ID
 	;
 
+globalList
+    :   declaration globalList
+    |   definition globalList
+    |
+    ;
 funcDefList
 	:	funcDef funcDefList
 	|   funcDecl funcDefList
-	|   definition funcDefList
-	|   declaration funcDefList
 	|	mainFunc
 	|
 	;
 
 funcDecl
-    :   types pointer lValue '(' typeList ')' endStatement
+    :   types pointer* lValue '(' typeList ')' endStatement
     ;
 
 typeList
@@ -42,13 +46,17 @@ typeList
     ;
 
 funcDef
-	:	types lValue '(' argList ')' '{' body '}'
+	:	types pointer* lValue '(' argList ')' '{' body '}'
 	;
 
 argList
-	:	(types lValue ',')*(types lValue)
+	:	(types arraySign? lValue ',')*(types arraySign? lValue)
 	|
 	;
+
+arraySign
+    :   '[' DIGIT? ']'
+    ;
 
 body
 	:	statement body
@@ -87,7 +95,7 @@ declaration
 	;
 
 arrayDecl
-    :	constant? types lValue '[' (DIGIT | ID) ']' endStatement
+    :	constant? types pointer* lValue '[' DIGIT ']' endStatement
 	;
 
 
@@ -115,7 +123,7 @@ arrayAssignment
 	;
 
 arrayOptions
-    :   '{' (rValue ',')* (rValue)? '}'
+    :   '{' (rValue ',')* (rValue) '}'
     |   '{' '}'
     |   rValue
     ;
@@ -282,14 +290,14 @@ FLT
 	;
 
 STR
-	:	'\'' (~'"' | '\'' )* '\''
+	:	CHAR
+	|   '\'' (~'\'' | '"' )* '\''
 	|	'"' (~'"' | '\'' )* '"'
-
-	|	CHAR	
 	;
 
 CHAR
 	:	'\'' [a-zA-Z] '\''
+	|   '"' [a-zA-Z] '"'
 	;
 
 BOOL

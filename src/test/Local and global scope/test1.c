@@ -1,6 +1,8 @@
+
 int y = 5;
 
+
 int main() {
-    int x;
-    x = y;
+    char* y[5];
+    char x = *y[4];
 }

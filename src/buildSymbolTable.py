@@ -1,14 +1,15 @@
 from grammar.grammarCVisitor import grammarCVisitor
 from grammar.grammarCParser import grammarCParser
 from symbolTable import symbolTable
+from AST import AST
 import sys
 
 class buildSymbolTable(grammarCVisitor):
 
-    def __init__(self, parser, filename):
-        self.parser = parser
+    def __init__(self, AST, filename):
+        self.ast = AST
         self.symbol_Table = symbolTable()
-        self.SP = 2
+        self.SP = 4
         end = filename.find('.c')
         filename = filename[:end]
         filename = filename[::-1]
@@ -29,29 +30,51 @@ class buildSymbolTable(grammarCVisitor):
 
         self.lc = 0
         self.ec = 0
+        self.scf = 0
+
+        self.MP = 1
+        self.return_type = None
 
         self.inDef = False
 
+        self.arrayS = 0
+
+
     def visitProgram(self, ctx:grammarCParser.ProgramContext):
         self.symbol_Table.addChild("Program")
-        self.file.write("ujp start\n")
-        self.visitChildren(ctx)
+        self.file.write("ssp 4\n")
+        self.file.write("ujp global\n")
+        self.visitLibraryList(ctx.libraryList())
+        if(ctx.globalList()!=None):
+            self.file.write("global:\n")
+            self.visitGlobalList((ctx.globalList()))
+            self.file.write("ujp start\n")
+        self.visitFuncDefList(ctx.funcDefList())
         self.symbol_Table.goToParent()
 
     def visitLibname(self, ctx:grammarCParser.LibnameContext):
         if(ctx.getText()=='stdio'):
             self.symbol_Table.add("scanf", "function definition", 'int')
-            self.file.write("scanfd:\nin d\nsto i\n")
-            self.file.write("scanfi:\nin i\nsto i\n")
-            self.file.write("scanfc:\nin c\nsto c\n")
+            self.file.write("scanfd:\nin i\nsto i\nretp\n")
+            self.file.write("scanfi:\nin i\nsto i\nretp\n")
+            self.file.write("scanfc:\nin c\nsto c\nretp\n")
+            self.file.write("scanfs:\n")
+            for i in range(0,15):
+                self.file.write("ldc c 0\n")
+            self.file.write("ldc c 27\n")
+            self.file.write("inscanfs:\nin c\ndpl c\nldc c 27\nequ c\nfjp s\nsto c\nretp\ns:\nsto c\ninc a 1\nujp inscanfs\n")
             #scanfs voor string met array
             self.symbol_Table.add("printf", "function definition", 'int')
-            self.file.write("printfd:\nout i\n")
-            self.file.write("printfi:\nout i\n")
-            self.file.write("printfc:\nout c\n")
+            self.file.write("printfd:\nout i\nretp\n")
+            self.file.write("printfi:\nout i\nretp\n")
+            self.file.write("printfc:\nout c\nretp\n")
+
+            self.file.write("printfs:\ninprintfs:\ninc a 1\ndpl c\nind c\nldc c 27\nequ c\nfjp p\nretp\n")
+            self.file.write("p:\nout c\nujp inprintfs\n")
 
 
     def visitMainFunc(self, ctx:grammarCParser.MainFuncContext):
+        self.return_type = 'int'
         self.symbol_Table.add("Main", "mainfunction", ctx.getChild(0).getText())
         self.symbol_Table.addChild("Main")
         if(ctx.getChildCount()!=0):
@@ -61,20 +84,32 @@ class buildSymbolTable(grammarCVisitor):
         self.symbol_Table.goToParent()
 
     def visitFuncDef(self, ctx:grammarCParser.FuncDefContext):
+        self.return_type = ctx.types().getText()
         name = self.visitLValue(ctx.lValue())
         if(ctx.argList()!=None):
-            arg = ctx.argList().types()
-            for i in arg:
-                name+=str(i.getText())
+            typelist = ctx.argList().types()
+            tn = []
+            for i in range(0, ctx.argList().getChildCount()):
+                if(ctx.argList().getChild(i) in typelist):
+                    tn.append(ctx.argList().getChild(i).getText())
+                    if(i+2<ctx.argList().getChildCount()):
+                        if(ctx.argList().getChild(i+2).getText()!=','):
+                            tn=tn[:-1]
+                            tn.append("array")
+            for i in tn:
+                name+=str(i)
         self.symbol_Table.add(name, "function definition", self.visitTypes(ctx.types()))
         self.symbol_Table.addChild(name)
-        self.SP += len(ctx.argList().types())
+        self.SP += len(ctx.argList().types())+4
         self.file.write(ctx.lValue().getText() +":\n")
         stackP = self.SP
-        self.file.write("ssp \n")
+        self.file.write("ssp "+ str(len(ctx.argList().lValue())+6) + "\n")
+        storage_size = self.ast.getSize(ctx.lValue().getText())
+        self.file.write("sep " + str(storage_size) + "\n")
         self.visitChildren(ctx)
-        #do something to return
+            #do something to return
         self.SP = stackP
+        self.file.write("retp\n")
         self.symbol_Table.goToParent()
 
     def visitFuncDecl(self, ctx:grammarCParser.FuncDeclContext):
@@ -97,83 +132,115 @@ class buildSymbolTable(grammarCVisitor):
                 for i in range(len(typeList)):
                     #put the right duo in the symbol table
                     self.symbol_Table.add(idList[i].getText(), "function argument", typeList[i].getText(), self.SP)
-                    self.SP
+                    #self.SP
 
     def visitDeclaration(self, ctx:grammarCParser.DeclarationContext):
         if(ctx.arrayDecl()==None):
             name = self.visitLValue(ctx.lValue())
-            if(self.symbol_Table.search(ctx.lValue().getText())!=False):
-                print("Error: Redeclaration of " + ctx.lValue().getText())
-                sys.exit()
+            s = self.symbol_Table.search(ctx.lValue().getText())
+            if(s!=False):
+                if(s[3]==0):
+                    print("Error: Redeclaration of " + ctx.lValue().getText())
+                    sys.exit()
             t = ctx.types().getText()
             if(ctx.pointer()!=[]):
                 for i in ctx.pointer():
                     t += '*'
-                self.file.write("ldc " + str(self.T["pointer"]) + " " + "0\n")
+                self.file.write("ldc " + str(self.T["pointer"]) + " " + str(self.SP+1) + "\n")
+
 
             else:
-                self.file.write("ldc " + str(self.T[t]) + " " + "0\n")
-            self.symbol_Table.add(name, "var declaration", t, self.SP)
+                tp = str(self.T[t])
+                n = "0"
+                if(tp=='r'):
+                    n="0.0"
+                elif(tp=='b'):
+                    n="f"
 
+                self.file.write("ldc " + tp + " " + n +"\n")
+            self.symbol_Table.add(name, "var declaration", t, self.SP)
             self.SP += 1
         else:
             self.visitArrayDecl(ctx.arrayDecl())
 
+        self.symbol_Table.resetType()
+
     def visitArrayDecl(self, ctx:grammarCParser.ArrayDeclContext):
         name = self.visitLValue(ctx.lValue())
-        if (self.symbol_Table.search(ctx.lValue().getText()) != False):
-            print("Error: Redeclaration of " + ctx.lValue().getText())
-            sys.exit()
+        s = self.symbol_Table.search(ctx.lValue().getText())
+        if(s != False):
+            if(s[3]==0):
+                print("Error: Redeclaration of " + ctx.lValue().getText())
+                sys.exit()
         t = 'array'
+        self.symbol_Table.add(name, ctx.types().getText(), t, self.SP, int(ctx.DIGIT().getText()))
         self.file.write("ldc a " + str(self.SP+1) + "\n")
         self.SP += 1
         if(ctx.DIGIT()!=None):
             for i in range(0, int(ctx.DIGIT().getText())):
-                self.file.write("ldc i 0\n")
+                tp = str(self.T[ctx.types().getText()])
+                n = "0"
+                if (tp == 'r'):
+                    n = "0.0"
+                elif (tp == 'b'):
+                    n = "f"
+                self.file.write("ldc "+ tp + " " + n + "\n")
                 self.SP += 1
 
         else:
             print("Error: array index not validatable")
             sys.exit()
-        self.symbol_Table.add(name, ctx.types().getText(), t, self.SP)
 
         self.SP += 1
     def visitDefinition(self, ctx:grammarCParser.DefinitionContext):
         self.inDef = True
         if(ctx.assignment().normalAssignment()!=None):
             name = ctx.assignment().normalAssignment().lValue().getText()
-            if(self.symbol_Table.search(name)!=False):
-                print("Error: Redefinition of " + name)
-                sys.exit()
+            st = self.symbol_Table.search(name)
+            if(st!=False):
+                if(st[3]==0):
+                    print("Error: Redefinition of " + name)
+                    sys.exit()
             t = ctx.types().getText()
             if (ctx.pointer() != []):
                 for i in ctx.pointer():
                     t += '*'
                 self.file.write("ldc " + str(self.T["pointer"]) + " " + "0\n")
             else:
-                self.file.write("ldc " + str(self.T[t]) + " " + "0\n")
-            self.symbol_Table.add(name, "var declaration", t, self.SP)
-            self.file.write("ldc a " + str(self.SP) +"\n")
-            self.SP += 1
+                tp = str(self.T[t])
+                n = "0"
+                if (tp == 'r'):
+                    n = "0.0"
+                elif (tp == 'b'):
+                    n = "f"
+                self.file.write("ldc " + tp + " " + n +"\n")
+            self.symbol_Table.add(name, "var definition", t, self.SP)
+            #self.SP+=1
             self.visitAssignment(ctx.assignment())
         else:
             name = ctx.assignment().arrayAssignment().lValue().getText()
             s = self.symbol_Table.search(name)
             if(s!=False):
-                print("Error: Redefinition of " + name)
+                if(s[3]==0):
+                    print("Error: Redefinition of " + name)
+                    sys.exit()
+            if(ctx.assignment().arrayAssignment().ID()!=None):
+                print("Error: variable array size")
                 sys.exit()
-            self.file.write("ldc " + str(self.T[ctx.types().getText()]) + " 0\n")
-            self.SP += 1
+            self.symbol_Table.add(name, ctx.types().getText(), 'array', self.SP, int(ctx.assignment().arrayAssignment().DIGIT().getText()))
+            #self.file.write("ldc " + str(self.T[ctx.types().getText()]) + " 0\n")
+            #self.SP += 1
 
             self.file.write("ldc a " + str(self.SP+1) + "\n")
             self.SP += 1
+            self.visitChildren(ctx)
 
         self.inDef = False
 
     def visitFunctionCall(self, ctx:grammarCParser.FunctionCallContext):
         name = ctx.lValue().getText()
         arg = ctx.parList().rValue()
-        stdio = {'s' : 'string', 'd' : 'int', 'i' : 'int', 'c' : 'char'}
+        stdio = {'s' : 'char*', 'd' : 'int', 'i' : 'int', 'c' : 'char'}
         scanf_d = {'s' : 'scanfs','d' : 'scanfd','i' : 'scanfi','c' : 'scanfc'}
         printf_d = {'s' : 'printfs','d' : 'printfd','i' : 'printfi','c' : 'printfc'}
         string = arg[0].getText()
@@ -197,7 +264,7 @@ class buildSymbolTable(grammarCVisitor):
                             i += 1
 
                         elif(string[i]=='\\' and string[i+1]=='\\'):
-                            self.file.write("ldc c \'\\\\'\n")
+                            self.file.write("ldc c \'\\'\n")
                             i += 1
 
                         else:
@@ -209,31 +276,58 @@ class buildSymbolTable(grammarCVisitor):
                 print("Error: incorrect number of specifiers")
                 sys.exit()
             for i in arg[1:]:
-                var = i.getText()
+                if(i.ID()!=[]):
+                    var = i.ID()[0].getText()
+
+                else:
+                    var = i.getText()
+
                 t = speci.pop(0)
                 var.replace("*", "")
                 var.replace("&", "")
                 entry = self.symbol_Table.search(var)
+                if(len(i.ID())==2 or (i.ID()!=[] and i.DIGIT()!=None)):
+                    entry = (entry[1], entry[0], entry[2], entry[3], entry[4])
                 if(entry==False):
-                    print("Error: " + i.getText() + " does not exit")
+                    print("Error: " + i.getText() + " does not exist")
                     sys.exit()
                 else:
                     #type check
                     if(entry[0]!=stdio[t]):
                         print("Error: specifier does not match variable")
                         sys.exit()
-                self.visitRValue(i)
+
                 if(name=='scanf'):
-                    self.file.write("ujp " + scanf_d[t] + "\n")
+                    slabel = scanf_d[t]
+                    if(slabel=="scanfs"):
+                        self.file.write("mst 0\n")
+                        self.file.write("ldc a " + str(entry[2]) + "\n")
+                        self.file.write("ldc a " + str(self.SP) + "\n")
+                        self.file.write("sto a\n")
+                        self.file.write("cup 1 scanfs\n")
+                    else:
+                        self.file.write("mst 0\n")
+                        self.file.write("ldc a " + str(entry[2]) + "\n")
+                        self.file.write("cup 1 " + slabel + "\n")
                 else:
-                    self.file.write("ujp " + printf_d[t] + "\n")
+                    self.file.write("mst 0\n")
+                    self.visitRValue(i)
+                    self.file.write("cup 1 " + printf_d[t] + "\n")
 
 
 
         else:
+            temp_MP = self.MP
+            pt = None
+            if(self.symbol_Table.prev_type!=None):
+                pt = self.symbol_Table.prev_type
             for i in arg:
-                if(i.ID()!=None):
+                if(i.ID()!=None and i.ID()!=[]):
                     s = self.symbol_Table.search(i.getText())
+                    self.symbol_Table.resetType()
+                    if(s==False):
+                        print("Error: argument not defined")
+                        sys.exit()
                     name += str(s[0])
                 elif(i.DIGIT()!=None):
                     name += 'int'
@@ -244,22 +338,35 @@ class buildSymbolTable(grammarCVisitor):
                 elif (i.FLT() != None):
                     name += 'float'
 
+            self.symbol_Table.prev_type=pt
             st = self.symbol_Table.search(name)
+            self.symbol_Table.resetType()
             if(st==False):
                 print("Error: Function called before definition, unvalid reference to " + ctx.lValue().getText())
                 sys.exit()
+            self.MP = self.SP+1
             self.file.write("mst " + str(st[3]) + "\n")
             self.visit(ctx.parList())
+                #storage requirement for parameters
+
             self.file.write("cup " + str(len(arg)) + " "+ ctx.lValue().getText() + "\n")
-                    #TODO len(arg)+space of array
+
+            self.MP = temp_MP
+
+    def visitEndStatement(self, ctx:grammarCParser.EndStatementContext):
+        self.symbol_Table.resetType()
+        self.visitChildren(ctx)
 
     def visitNormalAssignment(self, ctx:grammarCParser.NormalAssignmentContext):
         self.symbol_Table.resetType()
-        if(self.symbol_Table.search(ctx.lValue().getText())==False):
+        t = self.symbol_Table.search(ctx.lValue().getText())
+        if(t==False):
             print("Error: Assignment before declaration, unvalid reference to " + ctx.lValue().getText())
             sys.exit()
-
-        t = self.symbol_Table.search(ctx.lValue().getText())
+        if(t[0]=='array'):
+            print("Error: incorrect assignment to array")
+            sys.exit()
+        self.file.write("ldc a " + str(t[2]) + "\n")
         self.visitChildren(ctx)
         if((t[0])[-1]=="*"):
             self.file.write("sto a \n")
@@ -268,27 +375,75 @@ class buildSymbolTable(grammarCVisitor):
 
     def visitArrayAssignment(self, ctx:grammarCParser.ArrayAssignmentContext):
         self.symbol_Table.resetType()
-        if(self.symbol_Table.search(ctx.lValue().getText())==False):
+        t=self.symbol_Table.search(ctx.lValue().getText())
+        if(t==False):
             print("Error: Assignment before declaration, invalid reference to " + ctx.lValue().getText())
             sys.exit()
 
         if(self.inDef):
-            if(ctx.DIGIT()!=None):
-                self.file.write("ldc  0\n")
-                self.SP += 1
-                self.file.write("ldo a " + str(self.SP))
-                for i in range(1, int(ctx.DIGIT().getText())):
-                    self.file.write("ldc i 0\n")
-                    self.SP += 1
-            else:
+            #part of definition
+            if(ctx.DIGIT()==None):
                 print("Error: array index not validatable")
                 sys.exit()
-        self.visitChildren(ctx)
+            self.arrayS = int(ctx.DIGIT().getText())
+            #self.file.write("ldc a " + str(t[2]) + "\n")
+            self.symbol_Table.prev_type=t[1]
+            self.visitChildren(ctx)
+        else:
+            #assign 1 value to a place in the array
+            if(ctx.DIGIT()!=None):
+                self.file.write("ldc i " + str(ctx.DIGIT().getText()) + "\n")
+                self.arrayS = int(ctx.DIGIT().getText())
+            elif(ctx.ID() != None):
+                s = self.symbol_Table.search(ctx.ID[1]().getText())
+                self.file.write("ldo i " + str(s[2]) + "\n")
+                self.arrayS = int(s[4])
+
+            else:
+                print("Error: index not an integer")
+                sys.exit()
+            self.file.write("ldo a " + str(t[2]) + "\n")
+            self.file.write("ixa 1\n")
+            self.symbol_Table.prev_type=t[1]
+            self.visitChildren(ctx)
+            self.file.write("sto " +str(self.T[t[1]]) + "\n")
+
+
+    def visitArrayOptions(self, ctx:grammarCParser.ArrayOptionsContext):
+        if(self.inDef==False):
+            #assignment of x[2]=y[2] or x[2]=y(not possible if y array)
+            if (ctx.getChildCount() != 1):
+                print("Error: incorrect assignment of array")
+                sys.exit()
+            else:
+                self.visitChildren(ctx)
+
+
+        else:
+            #definition of int x[5]=...
+            if (ctx.getChildCount() == 1):
+                #=b(not possible) or =b[2](not possible)
+                print("Error: incorrect definition of array")
+                sys.exit()
+            elif (ctx.getChildCount()==2):
+                for i in range(0, self.arrayS):
+                    self.file.write("ldc i 0\n")
+                    self.SP += 1
+            elif (ctx.getChildCount()>=3):
+                #={...}
+                if(len(ctx.rValue())!=self.arrayS):
+                    print("Error: initializer list doesn't match array size")
+                    sys.exit()
+                else:
+                    for i in range(0, self.arrayS):
+                        self.visitRValue(ctx.rValue()[i])
+                    self.SP += self.arrayS
 
     def visitConditional(self, ctx:grammarCParser.ConditionalContext):
-        self.visitChildren(ctx)
-        self.file.write("endCond" + str(self.ec) + ":\n")
         self.ec+=1
+        var_ec = self.ec
+        self.visitChildren(ctx)
+        self.file.write("endCond" + str(var_ec) + ":\n")
 
     def visitIfStatement(self, ctx:grammarCParser.IfStatementContext):
         self.symbol_Table.addChild("if")
@@ -318,12 +473,13 @@ class buildSymbolTable(grammarCVisitor):
 
     def visitWhileStatement(self, ctx:grammarCParser.WhileStatementContext):
         self.symbol_Table.addChild("while")
-        self.lc += 1
         self.file.write("ujp l" + str(self.lc) + "\nl" + str(self.lc) + ":\n")
+        var_lc = self.lc
+        self.lc += 1
         self.visitCondition(ctx.condition())
         self.file.write("fjp endCond" + str(self.ec) + "\n")
         self.visitBody(ctx.body())
-        self.file.write("ujp l" + str(self.lc) + "\n")
+        self.file.write("ujp l" + str(var_lc) + "\n")
         self.symbol_Table.goToParent()
 
     def visitLoop(self, ctx:grammarCParser.WhileStatementContext):
@@ -333,18 +489,18 @@ class buildSymbolTable(grammarCVisitor):
         self.symbol_Table.goToParent()
 
     def visitCondition(self, ctx:grammarCParser.ConditionContext):
-        DC = {'<' : 'les', '>' : 'gtr', '==' : 'eq', '>=' : 'geq', '<=' : 'leq', '!=' : 'neq'}
+        DC = {'<' : 'les', '>' : 'grt', '==' : 'eq', '>=' : 'geq', '<=' : 'leq', '!=' : 'neq'}
         if(ctx.comparison()!=None):
             type1 = None;
             type2 = None;
-            if((ctx.rValue())[0].ID()!=None):
+            if((ctx.rValue())[0].ID()!=[]):
                 type1 = (self.symbol_Table.search((ctx.rValue())[0].getText()))
-            if((ctx.rValue())[1].ID()!=None):
+            if((ctx.rValue())[1].ID()!=[]):
                 type2 = (self.symbol_Table.search((ctx.rValue())[1].getText()))
             if(type1==False or type2==False):
                 print("Error: argument not declared before comparison")
                 sys.exit()
-            if ((ctx.rValue())[0].ID() != None and (ctx.rValue())[1].ID() != None):
+            if ((ctx.rValue())[0].ID() != [] and (ctx.rValue())[1].ID() != []):
                 if(str(type1[0])==str(type2[0])):
                     self.file.write("ldo " + str(self.T[type1[0]]) + " " + str(type1[2]) + "\n")
                     self.file.write("ldo " + str(self.T[type2[0]]) + " " + str(type2[2]) + "\n")
@@ -427,15 +583,15 @@ class buildSymbolTable(grammarCVisitor):
 
             elif(ctx.condition()!=None):
                 self.visitCondition(ctx.condition())
-                self.file.write("ldc b 1\nneq b\n")
+                self.file.write("ldc b t\nneq b\n")
                 self.SP += 1
 
             elif(ctx.getChildCount()==2):
                 if ((ctx.rValue())[0].DIGIT() != None or (ctx.rValue())[0].BOOL() != None):
                     if ((ctx.rValue())[0].getText() == "0"):
-                        self.file.write("ldc b 1\n")
+                        self.file.write("ldc b t\n")
                     else:
-                        self.file.write("ldc b 0\n")
+                        self.file.write("ldc b f\n")
                     self.SP += 1
 
                 else:
@@ -444,9 +600,9 @@ class buildSymbolTable(grammarCVisitor):
             elif(ctx.getChildCount()==1):
                 if((ctx.rValue())[0].DIGIT()!=None or (ctx.rValue())[0].BOOL()!=None):
                     if((ctx.rValue())[0].getText()=="0"):
-                        self.file.write("ldc b 0\n")
+                        self.file.write("ldc b f\n")
                     else:
-                        self.file.write("ldc b 1\n")
+                        self.file.write("ldc b t\n")
                     self.SP += 1
 
                 else:
@@ -457,6 +613,7 @@ class buildSymbolTable(grammarCVisitor):
 
     def visitRValue(self, ctx:grammarCParser.RValueContext):
         v = ctx.getText()
+        array = False
         if(ctx.ID()!=[]):
 
 
@@ -467,6 +624,7 @@ class buildSymbolTable(grammarCVisitor):
                 if (t == False):
                     print("Error: Undeclared variable " + ctx.ID().getText())
                     sys.exit()
+                t = (t[1], t[0], t[2], t[3], t[4])
                 x = self.search(ctx.ID()[1].getText())
                 if(x[0]!='int'):
                     print("Error: wrong index type")
@@ -478,30 +636,37 @@ class buildSymbolTable(grammarCVisitor):
                     self.file.write("ind i\n")
                 self.symbol_Table.prev_type = pr
 
-                if (pr == t[0]):
-                    print("Error: ")
+                if((pr!=t[0] and t[1]!="array") or (pr!=t[1] and t[0]!="array")):
+                    print("Error: type mismatched")
                     sys.exit()
+                array=True
+
             elif(ctx.DIGIT()!=None):
                 pr = self.symbol_Table.prev_type
                 self.symbol_Table.prev_type="array"
                 t = self.symbol_Table.search(ctx.ID()[0])
                 if (t == False):
-                    print("Error: Undeclared variable " + ctx.ID().getText())
+                    print("Error: Undeclared variable " + ctx.ID()[0].getText())
                     sys.exit()
+                t = (t[1], t[0], t[2], t[3])
                 self.file.write("ldo a " + str(t[2]) + "\n")
                 self.file.write("ldc i " + ctx.DIGIT().getText() + "\n")
                 self.file.write("ixa 1\n")
                 self.file.write("ind i\n")
                 self.symbol_Table.prev_type=pr
-                print(t[0])
-                if(pr==t[0]):
-                    print("Error: ")
+                if((pr!=t[0] and t[1]!="array") or (pr!=t[1] and t[0]!="array")):
+                    print("Error: type mismatched")
                     sys.exit()
+                array = True
             else:
                 t = self.symbol_Table.search(ctx.ID()[0])
                 if (t == False):
                     print("Error: Undeclared variable " + ctx.ID().getText())
                     sys.exit()
+                if (str(t[0])=='array'):
+                    print("Error: array as RValue")
+                    sys.exit()
+
             if(ctx.pointer()!=[]):
                 for i in ctx.pointer():
                     self.symbol_Table.prev_type+="*"
@@ -515,50 +680,50 @@ class buildSymbolTable(grammarCVisitor):
 
 
             else:
-                self.file.write("ldc a " + str(t[2]) + "\n")
-                self.SP += 1
-                if (ctx.pointer() != []):
-                    for i in ctx.pointer():
+                if(array==False):
+                    self.file.write("ldc a " + str(t[2]) + "\n")
+                    if (ctx.pointer() != []):
+                        for i in ctx.pointer():
+                            self.file.write("ind a\n")
+                    elif (ctx.reference() != []):
+                        self.file.write("ldo a " + str(t[2]) + "\n")
+                        for i in range(0,len(ctx.reference())-1):
+                            self.SP+=1
+                            self.file.write("ldo a " + str(self.SP-1) + "\n")
+                    if(self.T.get(self.symbol_Table.prev_type, (0, "error"))!=(0, "error")):
+                        self.file.write("ind " + str(self.T[t[0]]) + "\n")
+                    else:
                         self.file.write("ind a\n")
-                elif (ctx.reference() != []):
-                    self.file.write("ldo a " + str(t[2]) + "\n")
-                    for i in range(0,len(ctx.reference())-1):
-                        self.SP+=1
-                        self.file.write("ldo a " + str(self.SP-1) + "\n")
-                if(self.T.get(self.symbol_Table.prev_type, (0, "error"))!=(0, "error")):
-                    self.file.write("ind " + str(self.T[t[0]]) + "\n")
-                else:
-                    self.file.write("ind a\n")
 
 
-        if(ctx.DIGIT()!=None):
-            if(self.symbol_Table.prev_type != 'int' and self.symbol_Table.prev_type != 'float' and self.symbol_Table.prev_type != 'int*'):
+        if(ctx.DIGIT()!=None and ctx.ID()==[]):
+            if(self.symbol_Table.prev_type != 'int' and self.symbol_Table.prev_type != 'float' and self.symbol_Table.prev_type != 'int*' and self.symbol_Table.prev_type !=None):
                 print("Error: mismatched type, expected " + str(self.symbol_Table.prev_type) + " received int")
                 sys.exit()
             else:
                 self.file.write("ldc i " + v + "\n")
 
         if(ctx.STR()!=None):
-            if (self.symbol_Table.prev_type != 'char'):
+            if (self.symbol_Table.prev_type != 'char' and self.symbol_Table.prev_type!=None):
                 print("Error: mismatched type, expected " + str(self.symbol_Table.prev_type) + " received char")
                 sys.exit()
             else:
                 self.file.write("ldc c " + v + "\n")
         if(ctx.FLT()!=None):
-            if (self.symbol_Table.prev_type != 'float' ):
+            if (self.symbol_Table.prev_type != 'float' and self.symbol_Table.prev_type!=None):
                 print("Error: mismatched type, expected " + str(self.symbol_Table.prev_type) + " received float")
                 sys.exit()
             else:
                 self.file.write("ldc r " + v + "\n")
         if(ctx.BOOL()!=None):
-            if (self.symbol_Table.prev_type != 'bool'):
+            if (self.symbol_Table.prev_type != 'bool' and self.symbol_Table.prev_type!=None):
                 print("Error: mismatched type, expected " + str(self.symbol_Table.prev_type) + " received bool")
                 sys.exit()
             else:
                 if(v=='false' or v=='0'):
-                    v = '0'
+                    v = 'f'
                 elif(v=='true' or v=='1'):
-                    v = '1'
+                    v = 't'
                 else:
                     print("Error: ")
                     sys.exit()
@@ -579,7 +744,7 @@ class buildSymbolTable(grammarCVisitor):
                 self.visit((ctx.nextOperation())[0])
             if (op == "*"):
                 self.op_state = True
-                self.op_prev = "mull "
+                self.op_prev = "mul "
                 self.visit((ctx.nextOperation())[1])
                 if (self.op_state == True):
                     self.file.write(self.op_prev + str(self.N) + "\n")
@@ -623,7 +788,7 @@ class buildSymbolTable(grammarCVisitor):
                 self.visit(ctx.rValue())
             if (op == "*"):
                 self.op_state = True
-                self.op_prev = "mull "
+                self.op_prev = "mul "
                 self.visit(ctx.nextOperation())
 
 
@@ -656,7 +821,7 @@ class buildSymbolTable(grammarCVisitor):
 
     def visitBaseOperation(self, ctx:grammarCParser.BaseOperationContext):
         if(ctx.getChildCount()==1):
-            if(ctx.rValue().ID()!=None):
+            if(ctx.rValue().ID()!=[]):
                 t = self.symbol_Table.search(ctx.rValue().getText())
                 if(t==False):
                     print("Error: " + ctx.rValue().getText() + " is not defined")
@@ -686,7 +851,7 @@ class buildSymbolTable(grammarCVisitor):
                 self.visit(ctx.rValue())
             if (op == "*"):
                 self.op_state = True
-                self.op_prev = "mull "
+                self.op_prev = "mul "
                 self.visit(ctx.baseOperation())
                 if(ctx.baseOperation().getChildCount()==1 and self.op_state==True):
                     self.file.write(self.op_prev + str(self.N) + "\n")
@@ -728,4 +893,13 @@ class buildSymbolTable(grammarCVisitor):
                 self.op_state = False
             self.op_state = tempstateSave
             self.op_prev = tempOPSave
+
+    def visitReturnStatement(self, ctx:grammarCParser.ReturnStatementContext):
+        self.symbol_Table.prev_type=self.return_type
+        self.visitChildren(ctx)
+        if(ctx.getChild(1)==ctx.endStatement()):
+            self.file.write("retp\n")
+
+        else:
+            self.file.write("sro " + str(self.T[str(self.return_type)]) + " " + str(self.MP) + "\nretf\n")
 

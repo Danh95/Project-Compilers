@@ -34,6 +34,11 @@ class grammarCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by grammarCParser#globalList.
+    def visitGlobalList(self, ctx:grammarCParser.GlobalListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by grammarCParser#funcDefList.
     def visitFuncDefList(self, ctx:grammarCParser.FuncDefListContext):
         return self.visitChildren(ctx)
@@ -56,6 +61,11 @@ class grammarCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by grammarCParser#argList.
     def visitArgList(self, ctx:grammarCParser.ArgListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by grammarCParser#arraySign.
+    def visitArraySign(self, ctx:grammarCParser.ArraySignContext):
         return self.visitChildren(ctx)
 
 

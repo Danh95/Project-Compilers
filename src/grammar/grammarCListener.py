@@ -53,6 +53,15 @@ class grammarCListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by grammarCParser#globalList.
+    def enterGlobalList(self, ctx:grammarCParser.GlobalListContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#globalList.
+    def exitGlobalList(self, ctx:grammarCParser.GlobalListContext):
+        pass
+
+
     # Enter a parse tree produced by grammarCParser#funcDefList.
     def enterFuncDefList(self, ctx:grammarCParser.FuncDefListContext):
         pass
@@ -95,6 +104,15 @@ class grammarCListener(ParseTreeListener):
 
     # Exit a parse tree produced by grammarCParser#argList.
     def exitArgList(self, ctx:grammarCParser.ArgListContext):
+        pass
+
+
+    # Enter a parse tree produced by grammarCParser#arraySign.
+    def enterArraySign(self, ctx:grammarCParser.ArraySignContext):
+        pass
+
+    # Exit a parse tree produced by grammarCParser#arraySign.
+    def exitArraySign(self, ctx:grammarCParser.ArraySignContext):
         pass
 
 

@@ -1,10 +1,11 @@
 int main() { 
 		//logical operations
-	x+6;
-	7+5;
-	x=x+6;
-	y=7*5;
-	z=x+y+8*2/6;
-	++z;
-	return x+y;
+	int x = 5;
+	int y = 10;
+	int z = x+y;
+	y-z;
+	int factor = x*x;
+	int product = x*y*2;
+	int result = (factor+y)/(product-(x*y));
+	return;
 }
