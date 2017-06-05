@@ -459,7 +459,33 @@ class buildSymbolTable(grammarCVisitor):
         v = ctx.getText()
         if(ctx.ID()!=[]):
 
+            if (ctx.pointer() != []):
+                for i in ctx.pointer():
+                    self.symbol_Table.prev_type += "*"
+            elif (ctx.reference() != []):
+                for i in ctx.reference():
+                    if (self.symbol_Table.prev_type[-1] == "*"):
+                        self.symbol_Table.prev_type = self.symbol_Table.prev_type[:-1]
+                    else:
+                        print("Error: Unexpected pointer type")
+                        sys.exit()
 
+
+            else:
+                self.file.write("ldc a " + str(t[2]) + "\n")
+                self.SP += 1
+                if (ctx.pointer() != []):
+                    for i in ctx.pointer():
+                        self.file.write("ind a\n")
+                elif (ctx.reference() != []):
+                    self.file.write("ldo a " + str(t[2]) + "\n")
+                    for i in range(0, len(ctx.reference()) - 1):
+                        self.SP += 1
+                        self.file.write("ldo a " + str(self.SP - 1) + "\n")
+                if (self.T.get(self.symbol_Table.prev_type, (0, "error")) != (0, "error")):
+                    self.file.write("ind " + str(self.T[t[0]]) + "\n")
+                else:
+                    self.file.write("ind a\n")
             if(len(ctx.ID())==2):
                 pr = self.symbol_Table.prev_type
                 self.symbol_Table.prev_type = "array"
@@ -502,33 +528,7 @@ class buildSymbolTable(grammarCVisitor):
                 if (t == False):
                     print("Error: Undeclared variable " + ctx.ID().getText())
                     sys.exit()
-            if(ctx.pointer()!=[]):
-                for i in ctx.pointer():
-                    self.symbol_Table.prev_type+="*"
-            elif(ctx.reference()!=[]):
-                for i in ctx.reference():
-                    if(self.symbol_Table.prev_type[-1]=="*"):
-                        self.symbol_Table.prev_type=self.symbol_Table.prev_type[:-1]
-                    else:
-                        print("Error: Unexpected pointer type")
-                        sys.exit()
 
-
-            else:
-                self.file.write("ldc a " + str(t[2]) + "\n")
-                self.SP += 1
-                if (ctx.pointer() != []):
-                    for i in ctx.pointer():
-                        self.file.write("ind a\n")
-                elif (ctx.reference() != []):
-                    self.file.write("ldo a " + str(t[2]) + "\n")
-                    for i in range(0,len(ctx.reference())-1):
-                        self.SP+=1
-                        self.file.write("ldo a " + str(self.SP-1) + "\n")
-                if(self.T.get(self.symbol_Table.prev_type, (0, "error"))!=(0, "error")):
-                    self.file.write("ind " + str(self.T[t[0]]) + "\n")
-                else:
-                    self.file.write("ind a\n")
 
 
         if(ctx.DIGIT()!=None):
